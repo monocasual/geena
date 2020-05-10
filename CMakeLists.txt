@@ -10,16 +10,24 @@ set(CMAKE_CXX_STANDARD 17)
 # Debug mode for now
 set(CMAKE_BUILD_TYPE Debug)
 
+# Set include (-I) flag
+# TODO - is this modern CMake?
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${CMAKE_SOURCE_DIR}/src")
+
 # Defines the variable SOURCES.
 set(SOURCES
 	src/main.cpp
-	src/audioEngine.hpp src/audioEngine.cpp)
+	src/audioEngine.hpp src/audioEngine.cpp
+	src/deps/rtaudio/RtAudio.h src/deps/rtaudio/RtAudio.cpp)
 
 # Adds a new (executable) target called gg.
 add_executable(geena ${SOURCES})
 
 # Set compiler flags
-target_compile_options(geena PRIVATE -Wall -Werror)
+target_compile_options(geena PRIVATE -Wall)
+
+# Set macro definitions (-D flags)
+add_compile_definitions(__LINUX_ALSA__ __LINUX_PULSE__ __UNIX_JACK__)
 
 # Finds the required libraries. 
 find_library(LIB_LIBSNDFILE    sndfile)
@@ -33,6 +41,6 @@ if (NOT LIB_LIBSAMPLERATE)
 	message(FATAL_ERROR "libsamplerate not found")
 endif()
 
-# Specify libraries or flags to use when linking the target gg. These will 
-# become linker flags such as -lSDL2 and -lSDL2_ttf.
-target_link_libraries(geena sndfile samplerate)
+# Specify libraries or flags to use when linking the target geena. These will 
+# become linker flags such as -ljack.
+target_link_libraries(geena jack asound pthread pulse pulse-simple)
