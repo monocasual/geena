@@ -1,3 +1,6 @@
 [submodule "src/deps/rtaudio"]
 	path = src/deps/rtaudio
 	url = https://github.com/thestk/rtaudio.git
+[submodule "src/deps/libsndfile"]
+	path = src/deps/libsndfile
+	url = https://github.com/erikd/libsndfile.git

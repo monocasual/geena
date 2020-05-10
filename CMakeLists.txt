@@ -12,12 +12,15 @@ set(CMAKE_BUILD_TYPE Debug)
 
 # Set include (-I) flag
 # TODO - is this modern CMake?
+# TODO - is this modern CMake?
+# TODO - is this modern CMake?
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${CMAKE_SOURCE_DIR}/src")
 
 # Defines the variable SOURCES.
 set(SOURCES
 	src/main.cpp
 	src/audioEngine.hpp src/audioEngine.cpp
+	src/audioFile.hpp src/audioFile.cpp
 	src/deps/rtaudio/RtAudio.h src/deps/rtaudio/RtAudio.cpp)
 
 # Adds a new (executable) target called gg.
@@ -34,6 +37,9 @@ find_library(LIB_LIBSNDFILE    sndfile)
 find_library(LIB_LIBSAMPLERATE samplerate)
 
 # Fatal error if a library is missing from the system.
+# TODO - use git submodule
+# TODO - use git submodule
+# TODO - use git submodule
 if (NOT LIB_LIBSNDFILE)
 	message(FATAL_ERROR "libsndfile not found")
 endif()
@@ -43,4 +49,4 @@ endif()
 
 # Specify libraries or flags to use when linking the target geena. These will 
 # become linker flags such as -ljack.
-target_link_libraries(geena jack asound pthread pulse pulse-simple)
+target_link_libraries(geena jack asound pthread pulse pulse-simple sndfile)
