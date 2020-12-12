@@ -1,9 +1,9 @@
 #include <cassert>
-#include "deps/rtaudio/RtAudio.h"
+#include <RtAudio.h>
 #include "audioEngine.hpp"
 
 
-namespace geena::m::audioEngine
+namespace geena::engine::audioEngine
 {
 namespace
 {
@@ -70,5 +70,4 @@ void close()
 	if (rt_.isStreamOpen()) 
 		rt_.closeStream();
 }
-
-} // geena::m::
+} // geena::engine::

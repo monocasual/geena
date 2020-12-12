@@ -2,7 +2,7 @@
 #include "audioFile.hpp"
 
 
-namespace geena::m
+namespace geena::engine
 {
 AudioFile::AudioFile()
 {
@@ -25,4 +25,4 @@ AudioFile::AudioFile(std::string path)
 
 	sf_close(file);
 }
-} // geena::m::
+} // geena::engine::

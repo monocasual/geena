@@ -1,0 +1,9 @@
+{
+    "name": "geena",
+    "version-string": "0.0.0",
+    "dependencies": [
+      "libsndfile",
+      "libsamplerate",
+      "rtaudio"
+    ]
+  }

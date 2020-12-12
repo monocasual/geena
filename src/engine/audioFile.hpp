@@ -5,7 +5,7 @@
 #include <string>
 
 
-namespace geena::m
+namespace geena::engine
 {
 class AudioFile
 {
@@ -18,4 +18,4 @@ private:
 
     std::unique_ptr<float[]> m_data;
 };
-} // geena::m::
+} // geena::engine::

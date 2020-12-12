@@ -1,52 +1,96 @@
-cmake_minimum_required(VERSION 3.2)
+# ------------------------------------------------------------------------------
+# Preliminary setup
+# ------------------------------------------------------------------------------
 
-project(gg VERSION 0.0.0 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.12)
 
-set(CMAKE_COLOR_MAKEFILE ON)
+# ------------------------------------------------------------------------------
+# Project
+# ------------------------------------------------------------------------------
 
-# Enable C++17.
-set(CMAKE_CXX_STANDARD 17)
+project(geena LANGUAGES CXX)
 
-# Debug mode for now
-set(CMAKE_BUILD_TYPE Debug)
+# ------------------------------------------------------------------------------
+# Lists definition
+#
+# SOURCES - contains the source files
+# PREPROCESSOR_DEFS - preprocessor definitions
+# INCLUDE_DIRS - include directories (e.g. -I)
+# COMPILER_OPTIONS - additional flags for the compiler
+# LIBRARIES - external dependencies to link
+# COMPILER_FEATURES - e.g. C++17
+# TARGET_PROPERTIES - additional properties for the final target.
+# ------------------------------------------------------------------------------
 
-# Set include (-I) flag
-# TODO - is this modern CMake?
-# TODO - is this modern CMake?
-# TODO - is this modern CMake?
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${CMAKE_SOURCE_DIR}/src")
-
-# Defines the variable SOURCES.
-set(SOURCES
+list(APPEND SOURCES
 	src/main.cpp
-	src/audioEngine.hpp src/audioEngine.cpp
-	src/audioFile.hpp src/audioFile.cpp
-	src/deps/rtaudio/RtAudio.h src/deps/rtaudio/RtAudio.cpp)
+	src/engine/audioEngine.cpp
+	src/engine/audioFile.cpp)
+list(APPEND PREPROCESSOR_DEFS 
+	__LINUX_ALSA__ 
+	__LINUX_PULSE__ 
+	__UNIX_JACK__) # TODO customize
+list(APPEND INCLUDE_DIRS)
+list(APPEND COMPILER_OPTIONS)
+list(APPEND LIBRARIES)
+list(APPEND COMPILER_FEATURES cxx_std_17)
+list(APPEND TARGET_PROPERTIES)
 
-# Adds a new (executable) target called gg.
-add_executable(geena ${SOURCES})
+# ------------------------------------------------------------------------------
+# Detect OS
+# ------------------------------------------------------------------------------
 
-# Set compiler flags
-target_compile_options(geena PRIVATE -Wall)
-
-# Set macro definitions (-D flags)
-add_compile_definitions(__LINUX_ALSA__ __LINUX_PULSE__ __UNIX_JACK__)
-
-# Finds the required libraries. 
-find_library(LIB_LIBSNDFILE    sndfile)
-find_library(LIB_LIBSAMPLERATE samplerate)
-
-# Fatal error if a library is missing from the system.
-# TODO - use git submodule
-# TODO - use git submodule
-# TODO - use git submodule
-if (NOT LIB_LIBSNDFILE)
-	message(FATAL_ERROR "libsndfile not found")
-endif()
-if (NOT LIB_LIBSAMPLERATE)
-	message(FATAL_ERROR "libsamplerate not found")
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	set(OS_LINUX 1)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	set(OS_WINDOWS 1)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	set(OS_MACOS 1)
+else()
+	message(FATAL_ERROR "Unsupported platform '${CMAKE_SYSTEM_NAME}', quitting.")
 endif()
 
-# Specify libraries or flags to use when linking the target geena. These will 
-# become linker flags such as -ljack.
-target_link_libraries(geena jack asound pthread pulse pulse-simple sndfile)
+# ------------------------------------------------------------------------------
+# Compiler setup
+# ------------------------------------------------------------------------------
+
+if(DEFINED OS_WINDOWS)
+	list(APPEND COMPILER_OPTIONS /W4)
+else()
+	list(APPEND COMPILER_OPTIONS -Wall -Wextra -Wpedantic)
+endif()
+
+# ------------------------------------------------------------------------------
+# Dependencies
+# ------------------------------------------------------------------------------
+
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+message(FATAL_ERROR "CMAKE_TOOLCHAIN_FILE not defined!")
+endif()
+
+find_package(SndFile CONFIG REQUIRED)
+list(APPEND LIBRARIES SndFile::sndfile)
+
+find_package(RtAudio CONFIG REQUIRED)
+list(APPEND LIBRARIES RtAudio::rtaudio)
+
+# TODO - vcpkg currently doesn't provide CMake targets for libsamplerate: 
+# let's include it the manual way. 
+
+find_library(LIBRARY_SAMPLERATE 
+	NAMES samplerate libsamplerate libsamplerate-0 liblibsamplerate-0
+	PATH ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET})
+list(APPEND LIBRARIES ${LIBRARY_SAMPLERATE})
+
+
+# ------------------------------------------------------------------------------
+# Finalize 'geena' target (main executable).
+# ------------------------------------------------------------------------------
+
+add_executable(geena)
+target_compile_features(geena PRIVATE ${COMPILER_FEATURES})
+target_sources(geena PRIVATE ${SOURCES})
+target_compile_definitions(geena PRIVATE ${PREPROCESSOR_DEFS})
+target_include_directories(geena PRIVATE ${INCLUDE_DIRS})
+target_link_libraries(geena PRIVATE ${LIBRARIES})
+target_compile_options(geena PRIVATE ${COMPILER_OPTIONS})

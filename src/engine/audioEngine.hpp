@@ -4,7 +4,7 @@
 #include <functional>
 
 
-namespace geena::m::audioEngine
+namespace geena::engine::audioEngine
 {
 using Callback = std::function<void(void*, void*, unsigned)>;
 
@@ -18,4 +18,4 @@ struct Config
 
 bool init (Config c, Callback f);
 void close();
-} // geena::m::
+} // geena::engine::
