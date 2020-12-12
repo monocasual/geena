@@ -24,6 +24,7 @@ project(geena LANGUAGES CXX)
 
 list(APPEND SOURCES
 	src/main.cpp
+	src/engine/rendering.cpp
 	src/engine/audioBuffer.cpp
 	src/engine/audioEngine.cpp
 	src/engine/audioFile.cpp

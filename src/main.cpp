@@ -1,5 +1,6 @@
 #include <iostream>
 #include "engine/types.hpp"
+#include "engine/rendering.hpp"
 #include "engine/audioEngine.hpp"
 #include "engine/audioFile.hpp"
 #include "engine/audioFileFactory.hpp"
@@ -18,25 +19,33 @@ int main()
 		state.lock();
 
 		Frame position = state.position.load();
+		float pitch    = state.pitch.load();
 		Frame count    = bufferSize;
 
 		const AudioFile& audioFile = state.getAudioFile();
 
+		position = render(audioFile, out, pitch, position, bufferSize);
+printf("%d\n ", position);
+		state.position.store(position);
+
+		/*
 		if (position + count < audioFile.countFrames())
 		{
 			audioFile.render(out, position, count);
 			state.position.store(position + count);
-		}
+		}*/
 
 		state.unlock();
 	};
 
+	initRenderer();
 	init({ 0, 2, 44100, 1024 }, cb);
 
 	char input;
 	std::cout << "\nPlaying ... press <enter> to quit.\n";
 	std::cin.get( input );
 
+	close();
 
 	return 0;
 }
