@@ -6,23 +6,23 @@ namespace geena::engine
 {
 AudioFile::AudioFile()
 {
-
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-AudioFile::AudioFile(std::string path)
+AudioFile::AudioFile(AudioBuffer&& data)
+: m_data(std::move(data))
 {
-	SF_INFO  header;
-	SNDFILE* file = sf_open(path.c_str(), SFM_READ, &header);
+}
 
-    m_data = std::make_unique<float[]>(header.frames * header.channels);
 
-	if (sf_readf_float(file, m_data.get(), header.frames) != header.frames)
-		printf("Warning: incomplete read!\n");
+/* -------------------------------------------------------------------------- */
 
-	sf_close(file);
+
+void AudioFile::render(AudioBuffer& b, Frame start, Frame count, Frame offset) const
+{
+	b.copyData(m_data[start], count, /*CHANNEL TODO*/2, offset);
 }
 } // geena::engine::

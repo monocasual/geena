@@ -2,11 +2,12 @@
 
 
 #include <functional>
+#include "audioBuffer.hpp"
 
 
-namespace geena::engine::audioEngine
+namespace geena::engine
 {
-using Callback = std::function<void(void*, void*, unsigned)>;
+using Callback = std::function<void(AudioBuffer&, AudioBuffer&, unsigned)>;
 
 struct Config
 {
@@ -16,6 +17,6 @@ struct Config
     int bufferSize;
 };
 
-bool init (Config c, Callback f);
+bool init(Config c, Callback f);
 void close();
 } // geena::engine::

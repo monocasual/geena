@@ -3,7 +3,7 @@
 #include "audioEngine.hpp"
 
 
-namespace geena::engine::audioEngine
+namespace geena::engine
 {
 namespace
 {
@@ -19,7 +19,19 @@ int rtCallback_(void* out, void* in, unsigned bufferSize, double streamTime,
 	          RtAudioStreamStatus status, void *userData)
 {
 	assert(callback_ != nullptr);
-	callback_(out, in, bufferSize); 
+
+	AudioBuffer bufferOut, bufferIn;
+	bufferOut.setData(static_cast<float*>(out), bufferSize, /*G_MAX_IO_CHANS TODO */2);
+	bufferIn.setData(static_cast<float*>(in), bufferSize, /*G_MAX_IO_CHANS TODO */2);
+
+	callback_(bufferOut, bufferIn, bufferSize);
+
+	/* Unset data in buffers. If you don't do this, buffers go out of scope and 
+	destroy memory allocated by RtAudio ---> havoc. */
+
+	bufferOut.setData(nullptr, 0, 0);
+	bufferIn.setData(nullptr, 0, 0);
+
 	return 0;
 }
 } // {anonymous}
@@ -41,9 +53,9 @@ bool init(Config c, Callback f)
 
 	try
 	{
+		callback_ = f;
 		rt_.openStream(&params, NULL, RTAUDIO_FLOAT32, c.sampleRate, &bufferSize_, &rtCallback_);
 		rt_.startStream();
-		callback_ = f;
 		return true;
 	}
 	catch (RtAudioError& e)

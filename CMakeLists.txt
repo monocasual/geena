@@ -24,8 +24,11 @@ project(geena LANGUAGES CXX)
 
 list(APPEND SOURCES
 	src/main.cpp
+	src/engine/audioBuffer.cpp
 	src/engine/audioEngine.cpp
-	src/engine/audioFile.cpp)
+	src/engine/audioFile.cpp
+	src/engine/audioFileFactory.cpp
+	src/engine/state.cpp)
 list(APPEND PREPROCESSOR_DEFS 
 	__LINUX_ALSA__ 
 	__LINUX_PULSE__ 
