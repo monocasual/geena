@@ -15,6 +15,7 @@ public:
     AudioFile();
     AudioFile(AudioBuffer&& data);
 
+    Frame countFrames() const;
     void render(AudioBuffer& b, Frame start, Frame count, Frame offset=0) const;
 
 private:

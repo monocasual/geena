@@ -11,16 +11,20 @@ int main()
 	using namespace geena::engine;
 
 	State state;
-	state.audioFile = makeAudioFile("/home/mcl/audio/test sounds/sine.wav").value();
+	state.setAudioFile(makeAudioFile("/home/mcl/audio/test sounds/sine.wav").value());
 
 	Callback cb = [&state] (AudioBuffer& out, AudioBuffer& in, Frame bufferSize)
 	{
+		state.lock();
+
 		Frame position = state.position.load();
 		Frame count    = bufferSize;
 
-		state.audioFile.render(out, position, count);
+		state.getAudioFile().render(out, position, count);
 
 		state.position.store(position + count);
+
+		state.unlock();
 	};
 
 	init({ 0, 2, 44100, 1024 }, cb);

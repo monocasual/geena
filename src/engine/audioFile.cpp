@@ -21,6 +21,12 @@ AudioFile::AudioFile(AudioBuffer&& data)
 /* -------------------------------------------------------------------------- */
 
 
+Frame AudioFile::countFrames() const { return m_data.countFrames(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void AudioFile::render(AudioBuffer& b, Frame start, Frame count, Frame offset) const
 {
 	b.copyData(m_data[start], count, /*CHANNEL TODO*/2, offset);
