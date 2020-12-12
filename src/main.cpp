@@ -11,7 +11,7 @@ int main()
 	using namespace geena::engine;
 
 	State state;
-	state.setAudioFile(makeAudioFile("/home/mcl/audio/test sounds/sine.wav").value());
+	state.setAudioFile(makeAudioFile("/home/mcl/audio/test sounds/Unknown Artist - Kcik 18.wav", 44100).value());
 
 	Callback cb = [&state] (AudioBuffer& out, AudioBuffer& in, Frame bufferSize)
 	{
@@ -20,9 +20,13 @@ int main()
 		Frame position = state.position.load();
 		Frame count    = bufferSize;
 
-		state.getAudioFile().render(out, position, count);
+		const AudioFile& audioFile = state.getAudioFile();
 
-		state.position.store(position + count);
+		if (position + count < audioFile.countFrames())
+		{
+			audioFile.render(out, position, count);
+			state.position.store(position + count);
+		}
 
 		state.unlock();
 	};

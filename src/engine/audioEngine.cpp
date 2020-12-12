@@ -24,6 +24,8 @@ int rtCallback_(void* out, void* in, unsigned bufferSize, double streamTime,
 	bufferOut.setData(static_cast<float*>(out), bufferSize, /*G_MAX_IO_CHANS TODO */2);
 	bufferIn.setData(static_cast<float*>(in), bufferSize, /*G_MAX_IO_CHANS TODO */2);
 
+	bufferOut.clear();
+
 	callback_(bufferOut, bufferIn, bufferSize);
 
 	/* Unset data in buffers. If you don't do this, buffers go out of scope and 
