@@ -4,3 +4,6 @@
 [submodule "src/deps/libsndfile"]
 	path = src/deps/libsndfile
 	url = https://github.com/erikd/libsndfile.git
+[submodule "src/deps/fltk"]
+	path = src/deps/fltk
+	url = git@github.com:fltk/fltk.git

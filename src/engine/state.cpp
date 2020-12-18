@@ -7,7 +7,8 @@ namespace geena::engine
 State::State()
 : status  (Status::OFF)
 , position(0)
-, pitch   (0.8f)
+, pitch   (1.0f)
+, m_lock  (false)
 {
 }
 

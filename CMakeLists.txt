@@ -24,6 +24,8 @@ project(geena LANGUAGES CXX)
 
 list(APPEND SOURCES
 	src/main.cpp
+	src/ui/mainWindow.cpp
+	src/engine/api.cpp
 	src/engine/rendering.cpp
 	src/engine/audioBuffer.cpp
 	src/engine/audioEngine.cpp
@@ -34,7 +36,9 @@ list(APPEND PREPROCESSOR_DEFS
 	__LINUX_ALSA__ 
 	__LINUX_PULSE__ 
 	__UNIX_JACK__) # TODO customize
-list(APPEND INCLUDE_DIRS)
+list(APPEND INCLUDE_DIRS
+	${CMAKE_SOURCE_DIR}
+	${CMAKE_SOURCE_DIR}/src)
 list(APPEND COMPILER_OPTIONS)
 list(APPEND LIBRARIES)
 list(APPEND COMPILER_FEATURES cxx_std_17)
@@ -77,6 +81,9 @@ list(APPEND LIBRARIES SndFile::sndfile)
 
 find_package(RtAudio CONFIG REQUIRED)
 list(APPEND LIBRARIES RtAudio::rtaudio)
+
+find_package(FLTK CONFIG REQUIRED)
+list(APPEND LIBRARIES fltk fltk_gl fltk_forms fltk_images)
 
 # TODO - vcpkg currently doesn't provide CMake targets for libsamplerate: 
 # let's include it the manual way. 

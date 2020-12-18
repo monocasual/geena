@@ -4,6 +4,7 @@
     "dependencies": [
       "libsndfile",
       "libsamplerate",
-      "rtaudio"
+      "rtaudio",
+      "fltk"
     ]
   }
