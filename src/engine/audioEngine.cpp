@@ -3,7 +3,7 @@
 #include "audioEngine.hpp"
 
 
-namespace geena::engine
+namespace geena::engine::kernel
 {
 namespace
 {
@@ -84,4 +84,4 @@ void close()
 	if (rt_.isStreamOpen()) 
 		rt_.closeStream();
 }
-} // geena::engine::
+} // geena::engine::kernel::

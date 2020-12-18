@@ -5,7 +5,7 @@
 #include "audioBuffer.hpp"
 
 
-namespace geena::engine
+namespace geena::engine::kernel
 {
 using Callback = std::function<void(AudioBuffer&, AudioBuffer&, unsigned)>;
 
@@ -19,4 +19,4 @@ struct Config
 
 bool init(Config c, Callback f);
 void close();
-} // geena::engine::
+} // geena::engine::kernel::

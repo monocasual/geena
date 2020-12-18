@@ -14,7 +14,7 @@ int main()
 	State state;
 	state.setAudioFile(makeAudioFile("/home/mcl/audio/test sounds/Unknown Artist - Kcik 18.wav", 44100).value());
 
-	Callback cb = [&state] (AudioBuffer& out, AudioBuffer& in, Frame bufferSize)
+	kernel::Callback cb = [&state] (AudioBuffer& out, AudioBuffer& in, Frame bufferSize)
 	{
 		state.lock();
 
@@ -24,8 +24,8 @@ int main()
 
 		const AudioFile& audioFile = state.getAudioFile();
 
-		position = render(audioFile, out, pitch, position, bufferSize);
-printf("%d\n ", position);
+		position = renderer::render(audioFile, out, pitch, position, bufferSize);
+//printf("%d\n ", position);
 		state.position.store(position);
 
 		/*
@@ -38,14 +38,14 @@ printf("%d\n ", position);
 		state.unlock();
 	};
 
-	initRenderer();
-	init({ 0, 2, 44100, 1024 }, cb);
+	renderer::init();
+	kernel::init({ 0, 2, 44100, 1024 }, cb);
 
 	char input;
 	std::cout << "\nPlaying ... press <enter> to quit.\n";
 	std::cin.get( input );
 
-	close();
+	kernel::close();
 
 	return 0;
 }

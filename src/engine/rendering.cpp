@@ -3,7 +3,7 @@
 #include "rendering.hpp"
 
 
-namespace geena::engine
+namespace geena::engine::renderer
 {
 namespace
 {
@@ -36,7 +36,7 @@ Frame renderResampled(const AudioBuffer& in, AudioBuffer& out, float pitch, Fram
 /* -------------------------------------------------------------------------- */
 
 
-void initRenderer()
+void init()
 {
    	srcState_ = src_new(SRC_LINEAR, 2/*CHANS TODO*/, nullptr);
 	if (srcState_ == nullptr)
@@ -65,4 +65,4 @@ Frame render(const AudioFile& file, AudioBuffer& out, float pitch, Frame positio
 
     return framesUsed;
 }
-} // geena::engine::
+} // geena::engine::renderer::

@@ -6,8 +6,8 @@
 #include "audioBuffer.hpp"
 
 
-namespace geena::engine
+namespace geena::engine::renderer
 {
-void initRenderer();
+void init();
 Frame render(const AudioFile& f, AudioBuffer& out, float pitch, Frame position, Frame bufferSize);
-} // geena::engine::
+} // geena::engine::renderer::
