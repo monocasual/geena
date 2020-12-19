@@ -5,7 +5,7 @@
 namespace geena::engine
 {
 State::State()
-: status   (Status::STOP)
+: status   (ReadStatus::STOP)
 , position (0)
 , pitch    (1.0f)
 {

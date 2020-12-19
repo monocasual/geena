@@ -22,7 +22,7 @@ Frame renderResampled(const AudioBuffer& in, AudioBuffer& out, float pitch, Fram
 	srcData.data_out      = out[0];                       // Destination (processed data)
 	srcData.output_frames = out.countFrames();            // How many frames to process
 	srcData.end_of_input  = false;
-	srcData.src_ratio     = 1 / pitch;
+	srcData.src_ratio     = 1.0 / pitch;
 
 	src_process(srcState_, &srcData);
 

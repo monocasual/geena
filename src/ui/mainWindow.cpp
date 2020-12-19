@@ -4,10 +4,11 @@
 #include <iostream>
 #include <filesystem>
 #include <FL/Fl.H>
+#include "const.hpp"
+#include "types.hpp"
 #include "utils/string.hpp"
 #include "utils/fs.hpp"
 #include "engine/api.hpp"
-#include "engine/types.hpp"
 
 
 namespace geena::ui
@@ -20,19 +21,30 @@ bool keyPressed_ = false;
 /* -------------------------------------------------------------------------- */
 
 
+void refresh_(void* w)
+{
+	MainWindow* window = static_cast<MainWindow*>(w);
+	window->refresh();
+	Fl::repeat_timeout(G_UI_REFRESH_RATE, refresh_, static_cast<void*>(window));
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void onKeyDown_(int key)
 {
 	if (key == FL_Up)
-		engine::api::setPitch(engine::PitchDir::UP);
+		engine::api::setPitch(PitchDir::UP);
 	else
 	if (key == FL_Down)
-		engine::api::setPitch(engine::PitchDir::DOWN);
+		engine::api::setPitch(PitchDir::DOWN);
 	else
 	if (key == FL_Left)
-		engine::api::nudgePitch_begin(engine::PitchDir::DOWN);
+		engine::api::nudgePitch_begin(PitchDir::DOWN);
 	else
 	if (key == FL_Right)
-		engine::api::nudgePitch_begin(engine::PitchDir::UP);
+		engine::api::nudgePitch_begin(PitchDir::UP);
 }
 
 
@@ -63,12 +75,15 @@ void onFileDrop_(const char* s)
 /* -------------------------------------------------------------------------- */
 
 
-MainWindow::MainWindow()
-: Fl_Window(640, 480)
-, m_btn_playPause(8,   8, 100, 100, "Play/Pause")
-, m_btn_rewind   (118, 8, 100, 100, "Rewind")
+MainWindow::MainWindow(int x, int y, int w, int h)
+: Fl_Window(x, y, w, h)
+, m_btn_playPause(8,   216, 100, 100, "Play/Pause")
+, m_btn_rewind   (118, 216, 100, 100, "Rewind")
+, m_counter      (8,   8, w - 16, 200)
 {
 	end();
+
+	Fl::add_timeout(G_UI_REFRESH_RATE, refresh_, static_cast<void*>(this));
 
 	m_btn_playPause.callback([] (Fl_Widget* /*w*/, void* /*v*/) 
 	{ 
@@ -126,6 +141,17 @@ int MainWindow::handle(int event)
 	}
 
 	return Fl_Window::handle(event);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void MainWindow::refresh()
+{
+	engine::State s = engine::api::getState();
+
+	m_counter.refresh(s.position, s.audioFile != nullptr ? s.audioFile->countFrames() : 0);
 }
 
 

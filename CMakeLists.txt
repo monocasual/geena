@@ -27,6 +27,7 @@ list(APPEND SOURCES
 	src/utils/string.cpp
 	src/utils/fs.cpp
 	src/ui/mainWindow.cpp
+	src/ui/counter.cpp
 	src/engine/api.cpp
 	src/engine/rendering.cpp
 	src/engine/audioBuffer.cpp

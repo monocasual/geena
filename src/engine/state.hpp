@@ -12,7 +12,7 @@ struct State
 {
     State(); 
 
-    Status status;
+    ReadStatus status;
     Frame  position;
     float  pitch;
     std::shared_ptr<AudioFile> audioFile;

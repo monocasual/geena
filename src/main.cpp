@@ -1,5 +1,5 @@
 #include <iostream>
-#include "engine/types.hpp"
+#include "types.hpp"
 #include "engine/rendering.hpp"
 #include "engine/audioEngine.hpp"
 #include "engine/audioFile.hpp"
@@ -19,6 +19,7 @@ Queue<State, 32> g_queue;
 
 int main()
 {
+	using namespace geena;
 	using namespace geena::engine;
 	using namespace geena::ui;
 
@@ -39,7 +40,7 @@ int main()
 			G_DEBUG("  audioFile=" << (state.audioFile != nullptr));
 		}
 
-		if (state.status != Status::PLAY || state.audioFile == nullptr)
+		if (state.status != ReadStatus::PLAY || state.audioFile == nullptr)
 		{
 			g_state.store(state);
 			return;
@@ -54,7 +55,7 @@ int main()
 
 		if (to > state.audioFile->countFrames())
 		{
-			state.status   = Status::STOP;
+			state.status   = ReadStatus::STOP;
 			state.position = 0;
 		}
 
@@ -64,7 +65,7 @@ int main()
 	renderer::init();
 	kernel::init({ 0, 2, 44100, 1024 }, cb);
 
-	MainWindow w;
+	MainWindow w(0, 0, 640, 480);
 	int res = w.run();
 
 	kernel::close();

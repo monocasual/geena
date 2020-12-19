@@ -39,7 +39,7 @@ void onPushState_(std::function<void(State&)> f)
 
 void play()
 {
-    onPushState_([] (State& s) { s.status = Status::PLAY; });
+    onPushState_([] (State& s) { s.status = ReadStatus::PLAY; });
 }
 
 
@@ -48,7 +48,7 @@ void play()
 
 void stop()
 {
-    onPushState_([] (State& s) { s.status = Status::STOP; });
+    onPushState_([] (State& s) { s.status = ReadStatus::STOP; });
 }
 
 
@@ -59,7 +59,7 @@ void playPauseToggle()
 {
     onPushState_([] (State& s) 
     { 
-        s.status = s.status == Status::PLAY ? Status::PAUSE : Status::PLAY; 
+        s.status = s.status == ReadStatus::PLAY ? ReadStatus::PAUSE : ReadStatus::PLAY; 
     });
 }
 
@@ -115,6 +115,15 @@ void nudgePitch_end()
 
     onPushState_([] (State& s) { s.pitch = pitchOld_; });
     pitchOld_ = 0.0;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+State getState()
+{
+    return g_state.load();
 }
 } // geena::engine::
 } // geena::engine::api::
