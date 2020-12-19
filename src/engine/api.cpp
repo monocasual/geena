@@ -19,6 +19,10 @@ namespace
 {
 float pitchOld_ = 0.0;
 
+
+/* -------------------------------------------------------------------------- */
+
+
 void onPushState_(std::function<void(State&)> f)
 {
     State state = g_state.load();
@@ -56,10 +60,13 @@ bool loadAudioFile(std::string path)
     std::shared_ptr<AudioFile> audioFile = engine::makeAudioFile(path, 44100);
     if (audioFile == nullptr)
         return false;
-    State state = g_state.load();
-    state.audioFile = audioFile;
-    state.status    = Status::PLAY;
-    g_queue.push(state);
+    
+    onPushState_([&audioFile] (State& s) 
+    { 
+        s.audioFile = audioFile;
+        s.status    = Status::PLAY;
+    });
+
     return true;
 }
 
@@ -69,18 +76,20 @@ bool loadAudioFile(std::string path)
 
 void setPitch(PitchDir dir)
 {
-    State state = g_state.load();
-    state.pitch += dir == PitchDir::UP ? G_PITCH_DELTA : -G_PITCH_DELTA;
-    g_queue.push(state);
+    onPushState_([dir] (State& s) 
+    { 
+        s.pitch += dir == PitchDir::UP ? G_PITCH_DELTA : -G_PITCH_DELTA;
+    });
 }
 
 
 void nudgePitch_begin(PitchDir dir)
 {
-    State state = g_state.load();
-    pitchOld_ = state.pitch;
-    state.pitch = pitchOld_ + (dir == PitchDir::UP ? G_PITCH_NUDGE : -G_PITCH_NUDGE);
-    g_queue.push(state);
+    onPushState_([dir] (State& s) 
+    { 
+        pitchOld_ = s.pitch;
+        s.pitch = pitchOld_ + (dir == PitchDir::UP ? G_PITCH_NUDGE : -G_PITCH_NUDGE);
+    });
 }
 
 
@@ -88,10 +97,8 @@ void nudgePitch_end()
 {
     assert(pitchOld_ != 0.0); // Must follow a pitchNudge_begin call
 
-    State state = g_state.load();
-    state.pitch = pitchOld_;
+    onPushState_([] (State& s) { s.pitch = pitchOld_; });
     pitchOld_ = 0.0;
-    g_queue.push(state);
 }
 } // geena::engine::
 } // geena::engine::api::
