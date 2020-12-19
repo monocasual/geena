@@ -65,7 +65,21 @@ void onFileDrop_(const char* s)
 
 MainWindow::MainWindow()
 : Fl_Window(640, 480)
+, m_btn_playPause(8,   8, 100, 100, "Play/Pause")
+, m_btn_rewind   (118, 8, 100, 100, "Rewind")
 {
+	end();
+
+	m_btn_playPause.callback([] (Fl_Widget* /*w*/, void* /*v*/) 
+	{ 
+		engine::api::playPauseToggle(); 
+	});
+
+	m_btn_rewind.callback([] (Fl_Widget* /*w*/, void* /*v*/) 
+	{ 
+		engine::api::rewind(); 
+	});
+
 	show();
 }
 

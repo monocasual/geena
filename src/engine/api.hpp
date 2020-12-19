@@ -8,6 +8,8 @@ namespace geena::engine::api
 {
 void play();
 void stop();
+void playPauseToggle();
+void rewind();
 
 bool loadAudioFile(std::string path);
 

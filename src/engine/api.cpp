@@ -55,18 +55,34 @@ void stop()
 /* -------------------------------------------------------------------------- */
 
 
+void playPauseToggle()
+{
+    onPushState_([] (State& s) 
+    { 
+        s.status = s.status == Status::PLAY ? Status::PAUSE : Status::PLAY; 
+    });
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void rewind()
+{
+    onPushState_([] (State& s) { s.position = 0; });
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 bool loadAudioFile(std::string path)
 {
     std::shared_ptr<AudioFile> audioFile = engine::makeAudioFile(path, 44100);
     if (audioFile == nullptr)
         return false;
     
-    onPushState_([&audioFile] (State& s) 
-    { 
-        s.audioFile = audioFile;
-        s.status    = Status::PLAY;
-    });
-
+    onPushState_([&audioFile] (State& s) { s.audioFile = audioFile; });
     return true;
 }
 

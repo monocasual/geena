@@ -40,7 +40,10 @@ int main()
 		}
 
 		if (state.status != Status::PLAY || state.audioFile == nullptr)
+		{
+			g_state.store(state);
 			return;
+		}
 
 		const Frame from = state.position;
 		const Frame to   = state.position + bufferSize;
