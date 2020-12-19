@@ -6,7 +6,6 @@
 #include "engine/audioFileFactory.hpp"
 #include "engine/state.hpp"
 #include "engine/queue.hpp"
-#include "engine/event.hpp"
 #include "engine/circular.hpp"
 #include "ui/mainWindow.hpp"
 #include "utils/log.hpp"
@@ -15,7 +14,7 @@
 namespace geena::engine
 {
 Circular<State>  g_state;
-Queue<Event, 32> g_queue;
+Queue<State, 32> g_queue;
 }
 
 int main()
@@ -28,36 +27,20 @@ int main()
 
 	kernel::Callback cb = [] (AudioBuffer& out, AudioBuffer& in, Frame bufferSize)
 	{
-		std::cout << "--- RENDER ----------------------------\n";
-
 		State state = g_state.load();
-
-		std::cout << "audioFile: " << (state.audioFile != nullptr) << "\n";
 
 		while (auto o = g_queue.pop())
 		{
-			Event event = o.value();
-			G_DEBUG("Pop event " << (int) event.type);
-			switch (event.type)
-			{
-				case EventType::PLAY:
-					state.status = Status::PLAY; break;
-				case EventType::STOP:
-					state.status = Status::STOP; break;
-				case EventType::PAUSE:
-					state.status = Status::PAUSE; break;
-				case EventType::SET_PITCH:
-					state.pitch = event.fvalue; break;
-				case EventType::SET_AUDIO_FILE:
-					state.audioFile = event.audioFile; break;
-			}
+			state = o.value();
+			G_DEBUG("Pop new State from queue");
+			G_DEBUG("  status=" << (int) state.status);
+			G_DEBUG("  position=" << state.position);
+			G_DEBUG("  pitch=" << state.pitch);
+			G_DEBUG("  audioFile=" << (state.audioFile != nullptr));
 		}
 
 		if (state.status != Status::PLAY || state.audioFile == nullptr)
-		{
-			std::cout << "---------------------------------------\n";
 			return;
-		}
 
 		const Frame from = state.position;
 		const Frame to   = state.position + bufferSize;
@@ -73,8 +56,6 @@ int main()
 		}
 
 		g_state.store(state);
-
-		std::cout << "---------------------------------------\n";
 	};
 
 	renderer::init();

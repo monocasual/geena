@@ -8,10 +8,8 @@
 
 namespace geena::engine
 {
-class State
+struct State
 {
-public:
-
     State(); 
 
     Status status;

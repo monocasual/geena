@@ -1,9 +1,9 @@
 #include <cassert>
+#include <functional>
 #include "utils/log.hpp"
 #include "state.hpp"
 #include "const.hpp"
 #include "queue.hpp"
-#include "event.hpp"
 #include "circular.hpp"
 #include "audioFileFactory.hpp"
 #include "api.hpp"
@@ -12,12 +12,19 @@
 namespace geena::engine
 {
 extern Circular<State>  g_state;
-extern Queue<Event, 32> g_queue;
+extern Queue<State, 32> g_queue;
 namespace api
 {
 namespace
 {
 float pitchOld_ = 0.0;
+
+void onPushState_(std::function<void(State&)> f)
+{
+    State state = g_state.load();
+    f(state);
+    g_queue.push(state);
+}
 } // {anonymous}
 
 
@@ -28,7 +35,7 @@ float pitchOld_ = 0.0;
 
 void play()
 {
-    g_queue.push({EventType::PLAY});
+    onPushState_([] (State& s) { s.status = Status::PLAY; });
 }
 
 
@@ -37,14 +44,7 @@ void play()
 
 void stop()
 {
-    g_queue.push({EventType::STOP});
-    /*
-    g_queue.push({EventType::STOP});
-    while (g_state.isLocked())
-    {
-        G_DEBUG("Wait for render to finish block...");
-    };
-    G_DEBUG("Block finished");*/
+    onPushState_([] (State& s) { s.status = Status::STOP; });
 }
 
 
@@ -56,7 +56,10 @@ bool loadAudioFile(std::string path)
     std::shared_ptr<AudioFile> audioFile = engine::makeAudioFile(path, 44100);
     if (audioFile == nullptr)
         return false;
-    g_queue.push({EventType::SET_AUDIO_FILE, {}, audioFile});
+    State state = g_state.load();
+    state.audioFile = audioFile;
+    state.status    = Status::PLAY;
+    g_queue.push(state);
     return true;
 }
 
@@ -66,16 +69,18 @@ bool loadAudioFile(std::string path)
 
 void setPitch(PitchDir dir)
 {
-    float pitch = g_state.load().pitch + (dir == PitchDir::UP ? G_PITCH_DELTA : -G_PITCH_DELTA);
-    g_queue.push({EventType::SET_PITCH, pitch});
+    State state = g_state.load();
+    state.pitch += dir == PitchDir::UP ? G_PITCH_DELTA : -G_PITCH_DELTA;
+    g_queue.push(state);
 }
 
 
 void nudgePitch_begin(PitchDir dir)
 {
-    pitchOld_ = g_state.load().pitch;
-    float pitch = pitchOld_ + (dir == PitchDir::UP ? G_PITCH_NUDGE : -G_PITCH_NUDGE);
-    g_queue.push({EventType::SET_PITCH, pitch});
+    State state = g_state.load();
+    pitchOld_ = state.pitch;
+    state.pitch = pitchOld_ + (dir == PitchDir::UP ? G_PITCH_NUDGE : -G_PITCH_NUDGE);
+    g_queue.push(state);
 }
 
 
@@ -83,8 +88,10 @@ void nudgePitch_end()
 {
     assert(pitchOld_ != 0.0); // Must follow a pitchNudge_begin call
 
-    g_queue.push({EventType::SET_PITCH, pitchOld_});
+    State state = g_state.load();
+    state.pitch = pitchOld_;
     pitchOld_ = 0.0;
+    g_queue.push(state);
 }
 } // geena::engine::
 } // geena::engine::api::
