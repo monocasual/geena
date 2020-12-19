@@ -8,5 +8,5 @@
 
 namespace geena::engine
 {
-std::optional<AudioFile> makeAudioFile(std::string path, int sampleRate);
+std::shared_ptr<AudioFile> makeAudioFile(std::string path, int sampleRate);
 } // geena::engine::

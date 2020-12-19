@@ -9,7 +9,7 @@ namespace geena::engine
 {
 using Frame = int;
 
-enum class Status { OFF, PLAY, PAUSE };
+enum class Status { STOP, PLAY, PAUSE };
 enum class PitchDir { UP, DOWN };
 
 } // geena::engine::

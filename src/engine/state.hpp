@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include <atomic>
+#include <memory>
 #include "types.hpp"
 #include "audioFile.hpp"
 
@@ -12,35 +12,11 @@ class State
 {
 public:
 
-    class Lock
-    {
-    public:
-
-        Lock(State& s);
-        ~Lock();
-    
-    private:
-
-        State& m_state;
-    };
-
     State(); 
 
-    const AudioFile* getAudioFile() const;
-
-    bool isLocked() const;
-
-    void lock();
-    void unlock();
-    void setAudioFile(AudioFile&&);
-    
-    std::atomic<Status> status;
-    std::atomic<Frame>  position;
-    std::atomic<float>  pitch;
-    
-private:
-
-    std::atomic<bool> m_lock;
-    AudioFile         m_audioFile;
+    Status status;
+    Frame  position;
+    float  pitch;
+    std::shared_ptr<AudioFile> audioFile;
 };
 } // geena::engine::

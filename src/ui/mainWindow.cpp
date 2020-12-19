@@ -69,6 +69,7 @@ int MainWindow::handle(int event)
 			std::vector<std::string> paths = utils::string::split(Fl::event_text(), "\n");
 			std::string path = utils::fs::uriToPath(paths[0]);
 			engine::api::loadAudioFile(path);
+			engine::api::play();
 			return 1;
 		}
 		default:

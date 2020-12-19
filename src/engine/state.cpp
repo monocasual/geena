@@ -4,63 +4,10 @@
 
 namespace geena::engine
 {
-State::Lock::Lock(State& s)
-: m_state(s)
-{
-    m_state.lock();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-State::Lock::~Lock()
-{
-    m_state.unlock();
-}
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
 State::State()
-: status   (Status::OFF)
+: status   (Status::STOP)
 , position (0)
 , pitch    (1.0f)
-, m_lock   (false)
 {
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-const AudioFile* State::getAudioFile() const
-{
-    return m_audioFile.isValid() ? &m_audioFile : nullptr;
-}
-
-
-void State::setAudioFile(AudioFile&& audioFile)
-{
-    assert(status.load() == Status::OFF);
-    m_audioFile = std::move(audioFile);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void State::lock()   { m_lock.store(true, std::memory_order_release); }
-void State::unlock() { m_lock.store(false, std::memory_order_release); }
-
-
-/* -------------------------------------------------------------------------- */
-
-bool State::isLocked() const
-{
-    return m_lock.load(std::memory_order_acquire) == true;
 }
 } // geena::engine::

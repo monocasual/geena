@@ -5,45 +5,76 @@
 #include "engine/audioFile.hpp"
 #include "engine/audioFileFactory.hpp"
 #include "engine/state.hpp"
+#include "engine/queue.hpp"
+#include "engine/event.hpp"
+#include "engine/circular.hpp"
 #include "ui/mainWindow.hpp"
 #include "utils/log.hpp"
 
 
-using namespace geena::engine;
-using namespace geena::ui;
-
-
-State g_state;
-
+namespace geena::engine
+{
+Circular<State>  g_state;
+Queue<Event, 32> g_queue;
+}
 
 int main()
 {
+	using namespace geena::engine;
+	using namespace geena::ui;
+
+	State s;
+	g_state.store(s);
+
 	kernel::Callback cb = [] (AudioBuffer& out, AudioBuffer& in, Frame bufferSize)
 	{
-		if (g_state.status.load() != Status::PLAY)
-			return;
+		std::cout << "--- RENDER ----------------------------\n";
 
-		State::Lock lock(g_state);
+		State state = g_state.load();
 
-		const AudioFile* audioFile = g_state.getAudioFile();
-		if (audioFile == nullptr)
-			return;
+		std::cout << "audioFile: " << (state.audioFile != nullptr) << "\n";
 
-		Frame position = g_state.position.load();
-		float pitch    = g_state.pitch.load();
-		Frame count    = bufferSize;
-		
-		G_DEBUG("Render [" << position << ", " << position + count << ") - " << audioFile->countFrames());
-
-		position = renderer::render(*audioFile, out, pitch, position, bufferSize);
-
-		if (position + count > audioFile->countFrames())
+		while (auto o = g_queue.pop())
 		{
-			g_state.status.store(Status::OFF);
-			position = 0;
+			Event event = o.value();
+			G_DEBUG("Pop event " << (int) event.type);
+			switch (event.type)
+			{
+				case EventType::PLAY:
+					state.status = Status::PLAY; break;
+				case EventType::STOP:
+					state.status = Status::STOP; break;
+				case EventType::PAUSE:
+					state.status = Status::PAUSE; break;
+				case EventType::SET_PITCH:
+					state.pitch = event.fvalue; break;
+				case EventType::SET_AUDIO_FILE:
+					state.audioFile = event.audioFile; break;
+			}
 		}
 
-		g_state.position.store(position);
+		if (state.status != Status::PLAY || state.audioFile == nullptr)
+		{
+			std::cout << "---------------------------------------\n";
+			return;
+		}
+
+		const Frame from = state.position;
+		const Frame to   = state.position + bufferSize;
+		
+		G_DEBUG("Render [" << from << ", " << to << ") - " << state.audioFile->countFrames());
+
+		state.position = renderer::render(*state.audioFile, out, state.pitch, from, bufferSize);
+
+		if (to > state.audioFile->countFrames())
+		{
+			state.status   = Status::STOP;
+			state.position = 0;
+		}
+
+		g_state.store(state);
+
+		std::cout << "---------------------------------------\n";
 	};
 
 	renderer::init();
