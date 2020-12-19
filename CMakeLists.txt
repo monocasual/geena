@@ -24,6 +24,8 @@ project(geena LANGUAGES CXX)
 
 list(APPEND SOURCES
 	src/main.cpp
+	src/utils/string.cpp
+	src/utils/fs.cpp
 	src/ui/mainWindow.cpp
 	src/engine/api.cpp
 	src/engine/rendering.cpp
@@ -40,7 +42,7 @@ list(APPEND INCLUDE_DIRS
 	${CMAKE_SOURCE_DIR}
 	${CMAKE_SOURCE_DIR}/src)
 list(APPEND COMPILER_OPTIONS)
-list(APPEND LIBRARIES)
+list(APPEND LIBRARIES stdc++fs)
 list(APPEND COMPILER_FEATURES cxx_std_17)
 list(APPEND TARGET_PROPERTIES)
 
@@ -66,6 +68,10 @@ if(DEFINED OS_WINDOWS)
 	list(APPEND COMPILER_OPTIONS /W4)
 else()
 	list(APPEND COMPILER_OPTIONS -Wall -Wextra -Wpedantic)
+endif()
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+	list(APPEND PREPROCESSOR_DEFS NDEBUG)
 endif()
 
 # ------------------------------------------------------------------------------

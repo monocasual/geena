@@ -14,13 +14,15 @@ public:
 
     State(); 
 
-    const AudioFile& getAudioFile() const;
+    const AudioFile* getAudioFile() const;
 
+    bool isLocked() const;
+    
     void lock();
     void unlock();
-    bool tryLock();
     void setAudioFile(AudioFile&&);
     
+    std::atomic<bool>   rendering;
     std::atomic<Status> status;
     std::atomic<Frame>  position;
     std::atomic<float>  pitch;

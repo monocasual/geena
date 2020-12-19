@@ -1,6 +1,8 @@
 #include <cassert>
+#include "utils/log.hpp"
 #include "state.hpp"
 #include "const.hpp"
+#include "audioFileFactory.hpp"
 #include "api.hpp"
 
 
@@ -17,6 +19,46 @@ float pitchOld_ = 0.0;
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+void startRendering()
+{
+    g_state.rendering.store(true);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void stopRendering()
+{
+    g_state.rendering.store(false);
+    while (g_state.isLocked())
+    {
+        G_DEBUG("Wait for render to finish block...");
+    };
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool loadAudioFile(std::string path)
+{
+    stopRendering();
+
+    std::optional<AudioFile> audioFile = engine::makeAudioFile(path, 44100);
+    if (!audioFile)
+        return false;
+
+    g_state.setAudioFile(std::move(audioFile.value()));
+
+    startRendering();
+    return true;
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 

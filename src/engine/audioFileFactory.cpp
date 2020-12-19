@@ -1,6 +1,7 @@
 #include <cmath>
 #include <sndfile.h>
 #include <samplerate.h>
+#include "utils/log.hpp"
 #include "audioBuffer.hpp"
 #include "audioFileFactory.hpp"
 
@@ -23,11 +24,11 @@ bool resample(AudioBuffer& b, int oldSampleRate, int newSampleRate)
 	src_data.output_frames = newSize;
 	src_data.src_ratio     = ratio;
 
-	//u::log::print("[waveManager::resample] resampling: new size=%d frames\n", newSizeFrames);
+	G_DEBUG("Resampling: new size=" << newSize << " frames");
 
 	int ret = src_simple(&src_data, SRC_SINC_FASTEST, b.countChannels());
 	if (ret != 0) {
-		//u::log::print("[waveManager::resample] resampling error: %s\n", src_strerror(ret));
+		G_DEBUG("Resampling error: " << src_strerror(ret));
 		return false;
 	}
 
@@ -49,20 +50,30 @@ std::optional<AudioFile> makeAudioFile(std::string path, int sampleRate)
     SNDFILE* sndfile = sf_open(path.c_str(), SFM_READ, &header);
 
 	if (sndfile == nullptr) 
+	{
+		G_DEBUG("Can't open file " << path);
 		return {};
+	}
 	if (header.channels > 2)
+	{
+		G_DEBUG("Unsupported number of audio channels");
 		return {};
+	}
 
 	AudioBuffer buffer(header.frames, header.channels);
 
 	if (sf_readf_float(sndfile, buffer[0], header.frames) != header.frames)
-		printf("Warning: incomplete file read!\n");
+		G_DEBUG("Warning: incomplete file read!\n");
 	sf_close(sndfile);
 
 	if (header.samplerate != sampleRate)
 		if (!resample(buffer, header.samplerate, sampleRate))
+		{
+			G_DEBUG("Error while resampling audio");
 			return {};
+		}
 
+	G_DEBUG("AudioFile ready");
     return AudioFile(std::move(buffer));
 }
 } // geena::engine::

@@ -6,6 +6,7 @@
 #include "engine/audioFileFactory.hpp"
 #include "engine/state.hpp"
 #include "ui/mainWindow.hpp"
+#include "utils/log.hpp"
 
 
 using namespace geena::engine;
@@ -17,30 +18,25 @@ State g_state;
 
 int main()
 {
-	g_state.lock();
-	g_state.setAudioFile(makeAudioFile("/home/mcl/audio/test sounds/Unknown Artist - Kcik 18.wav", 44100).value());
-	g_state.unlock();
-
-	kernel::Callback cb = [&g_state] (AudioBuffer& out, AudioBuffer& in, Frame bufferSize)
+	kernel::Callback cb = [] (AudioBuffer& out, AudioBuffer& in, Frame bufferSize)
 	{
+		if (g_state.rendering.load() == false)
+			return;
+
 		g_state.lock();
 
 		Frame position = g_state.position.load();
 		float pitch    = g_state.pitch.load();
 		Frame count    = bufferSize;
+		
+		G_DEBUG("Render [" << position << ", " << position + count << ")");
 
-		const AudioFile& audioFile = g_state.getAudioFile();
-
-		position = renderer::render(audioFile, out, pitch, position, bufferSize);
-//printf("%d\n ", position);
-		g_state.position.store(position);
-
-		/*
-		if (position + count < audioFile.countFrames())
+		const AudioFile* audioFile = g_state.getAudioFile();
+		if (audioFile != nullptr)
 		{
-			audioFile.render(out, position, count);
-			g_state.position.store(position + count);
-		}*/
+			position = renderer::render(*audioFile, out, pitch, position, bufferSize);
+			g_state.position.store(position);
+		}
 
 		g_state.unlock();
 	};

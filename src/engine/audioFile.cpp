@@ -21,6 +21,12 @@ AudioFile::AudioFile(AudioBuffer&& data)
 /* -------------------------------------------------------------------------- */
 
 
+bool AudioFile::isValid() const { return m_data.isAllocd(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
 Frame AudioFile::countFrames() const { return m_data.countFrames(); }
 
 

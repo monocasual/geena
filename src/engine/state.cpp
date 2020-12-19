@@ -5,10 +5,11 @@
 namespace geena::engine
 {
 State::State()
-: status  (Status::OFF)
-, position(0)
-, pitch   (1.0f)
-, m_lock  (false)
+: rendering(false)
+, status   (Status::OFF)
+, position (0)
+, pitch    (1.0f)
+, m_lock   (false)
 {
 }
 
@@ -16,16 +17,15 @@ State::State()
 /* -------------------------------------------------------------------------- */
 
 
-const AudioFile& State::getAudioFile() const
+const AudioFile* State::getAudioFile() const
 {
-    assert(m_lock.load(std::memory_order_acquire) == true);
-    return m_audioFile;
+    return m_audioFile.isValid() ? &m_audioFile : nullptr;
 }
 
 
 void State::setAudioFile(AudioFile&& audioFile)
 {
-    assert(m_lock.load(std::memory_order_acquire) == true);
+    assert(rendering.load() == false);
     m_audioFile = std::move(audioFile);
 }
 
@@ -40,12 +40,8 @@ void State::unlock() { m_lock.store(false, std::memory_order_release); }
 
 /* -------------------------------------------------------------------------- */
 
-
-bool State::tryLock()
+bool State::isLocked() const
 {
-    /* std::atomic<T>::exchange returns the previous value: if it's 'true', a 
-    lock is already in taken. */
-
-    return m_lock.exchange(true, std::memory_order_acquire) == false;
+    return m_lock.load(std::memory_order_acquire) == true;
 }
 } // geena::engine::
