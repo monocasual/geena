@@ -23,7 +23,7 @@ int main()
 		if (g_state.rendering.load() == false)
 			return;
 
-		g_state.lock();
+		State::Lock lock(g_state);
 
 		Frame position = g_state.position.load();
 		float pitch    = g_state.pitch.load();
@@ -37,8 +37,6 @@ int main()
 			position = renderer::render(*audioFile, out, pitch, position, bufferSize);
 			g_state.position.store(position);
 		}
-
-		g_state.unlock();
 	};
 
 	renderer::init();

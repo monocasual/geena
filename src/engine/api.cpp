@@ -38,6 +38,7 @@ void stopRendering()
     {
         G_DEBUG("Wait for render to finish block...");
     };
+    G_DEBUG("Block finished");
 }
 
 

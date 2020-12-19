@@ -12,12 +12,24 @@ class State
 {
 public:
 
+    class Lock
+    {
+    public:
+
+        Lock(State& s);
+        ~Lock();
+    
+    private:
+
+        State& m_state;
+    };
+
     State(); 
 
     const AudioFile* getAudioFile() const;
 
     bool isLocked() const;
-    
+
     void lock();
     void unlock();
     void setAudioFile(AudioFile&&);
