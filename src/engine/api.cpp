@@ -22,18 +22,18 @@ float pitchOld_ = 0.0;
 /* -------------------------------------------------------------------------- */
 
 
-void startRendering()
+void play()
 {
-    g_state.rendering.store(true);
+    g_state.status.store(Status::PLAY);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void stopRendering()
+void stop()
 {
-    g_state.rendering.store(false);
+    g_state.status.store(Status::OFF);
     while (g_state.isLocked())
     {
         G_DEBUG("Wait for render to finish block...");
@@ -47,7 +47,7 @@ void stopRendering()
 
 bool loadAudioFile(std::string path)
 {
-    stopRendering();
+    stop();
 
     std::optional<AudioFile> audioFile = engine::makeAudioFile(path, 44100);
     if (!audioFile)
@@ -55,7 +55,6 @@ bool loadAudioFile(std::string path)
 
     g_state.setAudioFile(std::move(audioFile.value()));
 
-    startRendering();
     return true;
 }
 

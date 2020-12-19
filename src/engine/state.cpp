@@ -26,8 +26,7 @@ State::Lock::~Lock()
 
 
 State::State()
-: rendering(false)
-, status   (Status::OFF)
+: status   (Status::OFF)
 , position (0)
 , pitch    (1.0f)
 , m_lock   (false)
@@ -46,7 +45,7 @@ const AudioFile* State::getAudioFile() const
 
 void State::setAudioFile(AudioFile&& audioFile)
 {
-    assert(rendering.load() == false);
+    assert(status.load() == Status::OFF);
     m_audioFile = std::move(audioFile);
 }
 

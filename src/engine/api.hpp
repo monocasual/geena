@@ -6,8 +6,8 @@
 
 namespace geena::engine::api
 {
-void startRendering();
-void stopRendering();
+void play();
+void stop();
 
 bool loadAudioFile(std::string path);
 

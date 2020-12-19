@@ -20,10 +20,7 @@ int main()
 {
 	kernel::Callback cb = [] (AudioBuffer& out, AudioBuffer& in, Frame bufferSize)
 	{
-		bool rendering = g_state.rendering.load() == true;
-		bool playing   = g_state.status.load() == Status::PLAY;
-
-		if (!rendering || !playing)
+		if (g_state.status.load() != Status::PLAY)
 			return;
 
 		State::Lock lock(g_state);

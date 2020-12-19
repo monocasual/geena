@@ -34,7 +34,6 @@ public:
     void unlock();
     void setAudioFile(AudioFile&&);
     
-    std::atomic<bool>   rendering;
     std::atomic<Status> status;
     std::atomic<Frame>  position;
     std::atomic<float>  pitch;
