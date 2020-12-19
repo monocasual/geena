@@ -20,23 +20,33 @@ int main()
 {
 	kernel::Callback cb = [] (AudioBuffer& out, AudioBuffer& in, Frame bufferSize)
 	{
-		if (g_state.rendering.load() == false)
+		bool rendering = g_state.rendering.load() == true;
+		bool playing   = g_state.status.load() == Status::PLAY;
+
+		if (!rendering || !playing)
 			return;
 
 		State::Lock lock(g_state);
+
+		const AudioFile* audioFile = g_state.getAudioFile();
+		if (audioFile == nullptr)
+			return;
 
 		Frame position = g_state.position.load();
 		float pitch    = g_state.pitch.load();
 		Frame count    = bufferSize;
 		
-		G_DEBUG("Render [" << position << ", " << position + count << ")");
+		G_DEBUG("Render [" << position << ", " << position + count << ") - " << audioFile->countFrames());
 
-		const AudioFile* audioFile = g_state.getAudioFile();
-		if (audioFile != nullptr)
+		position = renderer::render(*audioFile, out, pitch, position, bufferSize);
+
+		if (position + count > audioFile->countFrames())
 		{
-			position = renderer::render(*audioFile, out, pitch, position, bufferSize);
-			g_state.position.store(position);
+			g_state.status.store(Status::OFF);
+			position = 0;
 		}
+
+		g_state.position.store(position);
 	};
 
 	renderer::init();
