@@ -4,15 +4,15 @@
 #include "state.hpp"
 #include "const.hpp"
 #include "queue.hpp"
-#include "circular.hpp"
 #include "audioFileFactory.hpp"
 #include "api.hpp"
 
 
 namespace geena::engine
 {
-extern Circular<State>  g_state;
-extern Queue<State, 32> g_queue;
+extern Queue<State, 32> g_queue_mainToAudio;
+extern Queue<State, 32> g_queue_audioToMain;
+extern State            g_state; // main thread state
 namespace api
 {
 namespace
@@ -25,9 +25,11 @@ float pitchOld_ = 0.0;
 
 void onPushState_(std::function<void(State&)> f)
 {
-    State state = g_state.load();
+    refreshMainState();   // Get the most up-to-date state from the audio thread
+    State state = g_state;
     f(state);
-    g_queue.push(state);
+    g_queue_mainToAudio.push(state);
+    g_queue_audioToMain.push(state);
 }
 } // {anonymous}
 
@@ -121,9 +123,23 @@ void nudgePitch_end()
 /* -------------------------------------------------------------------------- */
 
 
-State getState()
+void refreshMainState()
 {
-    return g_state.load();
+	while (auto o = g_queue_audioToMain.pop())
+    {
+		g_state = o.value();
+        G_DEBUG("Pop new State from [AUDIO] thread");
+		G_DEBUG("  status=" << (int) g_state.status);
+		G_DEBUG("  position=" << g_state.position);
+		G_DEBUG("  pitch=" << g_state.pitch);
+		G_DEBUG("  audioFile=" << (g_state.audioFile != nullptr));
+    }
+}
+
+
+const State& getState()
+{
+    return g_state;
 }
 } // geena::engine::
 } // geena::engine::api::

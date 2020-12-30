@@ -6,16 +6,17 @@
 #include "engine/audioFileFactory.hpp"
 #include "engine/state.hpp"
 #include "engine/queue.hpp"
-#include "engine/circular.hpp"
 #include "ui/mainWindow.hpp"
 #include "utils/log.hpp"
 
 
 namespace geena::engine
 {
-Circular<State>  g_state;
-Queue<State, 32> g_queue;
+Queue<State, 32> g_queue_mainToAudio;
+Queue<State, 32> g_queue_audioToMain;
+State            g_state; // main thread state
 }
+
 
 int main()
 {
@@ -23,17 +24,17 @@ int main()
 	using namespace geena::engine;
 	using namespace geena::ui;
 
-	State s;
-	g_state.store(s);
+	State initialState;
+	g_queue_mainToAudio.push(initialState);
 
-	kernel::Callback cb = [] (AudioBuffer& out, AudioBuffer& in, Frame bufferSize)
+
+	State state; // audio thread state
+	kernel::Callback cb = [&state] (AudioBuffer& out, AudioBuffer& in, Frame bufferSize)
 	{
-		State state = g_state.load();
-
-		while (auto o = g_queue.pop())
+		while (auto o = g_queue_mainToAudio.pop())
 		{
 			state = o.value();
-			G_DEBUG("Pop new State from queue");
+			G_DEBUG("Pop new State from main thread");
 			G_DEBUG("  status=" << (int) state.status);
 			G_DEBUG("  position=" << state.position);
 			G_DEBUG("  pitch=" << state.pitch);
@@ -41,10 +42,7 @@ int main()
 		}
 
 		if (state.status != ReadStatus::PLAY || state.audioFile == nullptr)
-		{
-			g_state.store(state);
 			return;
-		}
 
 		const Frame from = state.position;
 		const Frame to   = state.position + bufferSize;
@@ -59,7 +57,9 @@ int main()
 			state.position = 0;
 		}
 
-		g_state.store(state);
+		// Notify main thread of audio changes. 
+		if (!g_queue_audioToMain.push(state))
+			puts("FULL!!!!!!!!!!!!");
 	};
 
 	renderer::init();
