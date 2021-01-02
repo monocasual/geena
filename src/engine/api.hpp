@@ -15,6 +15,5 @@ void setPitch(PitchDir dir);
 void nudgePitch_begin(PitchDir dir);
 void nudgePitch_end();
 
-void refreshMainState();
-const State& getState();
+State getCurrentState();
 } // geena::engine::api::

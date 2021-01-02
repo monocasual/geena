@@ -23,8 +23,6 @@ bool keyPressed_ = false;
 
 void refresh_(void* w)
 {
-	engine::api::refreshMainState();
-
 	MainWindow* window = static_cast<MainWindow*>(w);
 	window->refresh();
 	Fl::repeat_timeout(G_UI_REFRESH_RATE, refresh_, static_cast<void*>(window));
@@ -151,9 +149,9 @@ int MainWindow::handle(int event)
 
 void MainWindow::refresh()
 {
-	const engine::State& s = engine::api::getState();
-
-	m_counter.refresh(s.position, s.audioFile != nullptr ? s.audioFile->countFrames() : 0);
+	const engine::State s = engine::api::getCurrentState();
+	if (s.valid)
+		m_counter.refresh(s.position, 666);
 }
 
 

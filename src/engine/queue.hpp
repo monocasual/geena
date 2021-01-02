@@ -18,21 +18,23 @@ public:
 
     Queue() : m_head(0), m_tail(0) {}
     Queue(const Queue&) = delete;
+    Queue(Queue&&) = delete;
+	Queue& operator= (const Queue& o) = delete;
+	Queue& operator= (Queue&& o) = delete;
 
-
-    std::optional<T> pop()
+    bool pop(T& item)
     {
         std::size_t curr = m_head.load();
         if (curr == m_tail.load())  // Queue empty, nothing to do
-            return {};
+            return false;
 
-        T item = m_data[curr];
+        item = std::move(m_data[curr]);
         m_head.store(increment(curr));
-        return {item};
+        return true;
     }
 
 
-    bool push(const T& item)
+    bool push(T&& item)
     {
         std::size_t curr = m_tail.load();
         std::size_t next = increment(curr);
@@ -40,7 +42,7 @@ public:
         if (next == m_head.load()) // Queue full, nothing to do
             return false;
 
-        m_data[curr] = item;
+        m_data[curr] = std::move(item);
         m_tail.store(next);
         return true;
     }
@@ -51,7 +53,6 @@ private:
     {
         return (i + 1) % size;
     }
-
 
     std::array<T, size> m_data;
     std::atomic<std::size_t> m_head;

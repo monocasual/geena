@@ -12,9 +12,11 @@
 
 namespace geena::engine
 {
+Model g_model;
+/*
 Queue<State, 32> g_queue_mainToAudio;
 Queue<State, 32> g_queue_audioToMain;
-State            g_state; // main thread state
+State            g_state; // main thread state*/
 }
 
 
@@ -24,46 +26,33 @@ int main()
 	using namespace geena::engine;
 	using namespace geena::ui;
 
-	State initialState;
-	g_queue_mainToAudio.push(initialState);
-
-
-	State state; // audio thread state
-	kernel::Callback cb = [&state] (AudioBuffer& out, Frame bufferSize)
+	kernel::Callback cb = [] (AudioBuffer& out, Frame bufferSize)
 	{
-		while (auto o = g_queue_mainToAudio.pop())
-		{
-			state = o.value();
-			G_DEBUG("Pop new State from main thread");
-			G_DEBUG("  status=" << (int) state.status);
-			G_DEBUG("  position=" << state.position);
-			G_DEBUG("  pitch=" << state.pitch);
-			G_DEBUG("  audioFile=" << (state.audioFile != nullptr));
-		}
+		g_model.state.valid = true;
 
-		if (state.status != ReadStatus::PLAY || state.audioFile == nullptr)
+		/* Parse incoming commands from main thread, if any. */
+		g_model.applyChanges();
+
+		if (g_model.state.status != ReadStatus::PLAY || g_model.layout.audioFile == nullptr)
 			return;
 
-		const Frame from = state.position;
-		const Frame to   = state.position + bufferSize;
+		const Frame from = g_model.state.position;
+		const Frame to   = g_model.state.position + bufferSize;
+		const Frame max  = g_model.layout.audioFile->countFrames();
 		
-		G_DEBUG("Render [" << from << ", " << to << ") - " << state.audioFile->countFrames());
+		G_DEBUG("Render [" << from << ", " << to << ") - " << max);
 
-		state.position = renderer::render(*state.audioFile, out, state.pitch, from, bufferSize);
+		g_model.state.position = renderer::render(*g_model.layout.audioFile, out, g_model.layout.pitch, from, bufferSize);
 
-		if (to > state.audioFile->countFrames())
+		if (to > max)
 		{
-			state.status   = ReadStatus::STOP;
-			state.position = 0;
+			g_model.state.status   = ReadStatus::STOP;
+			g_model.state.position = 0;
 		}
-
-		// Notify main thread of audio changes. 
-		if (!g_queue_audioToMain.push(state))
-			puts("FULL!!!!!!!!!!!!");
 	};
 
 	renderer::init();
-	kernel::init({ 0, 2, 44100, 1024 }, cb);
+	kernel::init({ 0, 2, 44100, 4096 }, cb);
 
 	MainWindow w(0, 0, 640, 480);
 	int res = w.run();
