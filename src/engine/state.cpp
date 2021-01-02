@@ -5,7 +5,7 @@
 
 namespace geena::engine
 {
-void Model::applyChanges()
+void Model::rt_applyChanges()
 {
     std::function<void()> func;
     while (m_queueIn.pop(func))
@@ -30,14 +30,14 @@ void Model::requestChange(std::function<void()>&& f)
 
 Layout Model::requestLayout()
 {
+    while (m_queueOutLayout.pop(m_layoutOut));
+
     requestChange([&queue = m_queueOutLayout, &layout = layout] 
     { 
         queue.push(Layout(layout)); 
     });
 
-    Layout layout;
-    while (m_queueOutLayout.pop(layout));
-    return layout;
+    return m_layoutOut;
 }
 
 
@@ -45,14 +45,14 @@ Layout Model::requestLayout()
 
 
 State Model::requestState()
-{
+{   
+    while (m_queueOutState.pop(m_stateOut));
+
     requestChange([&queue = m_queueOutState, &state = state] 
     { 
         queue.push(State(state)); 
     });
-    
-    State state;
-    while (m_queueOutState.pop(state));
-    return state;
+
+    return m_stateOut;
 }
 } // geena::engine::

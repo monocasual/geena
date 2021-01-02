@@ -8,6 +8,7 @@
 #include "types.hpp"
 #include "utils/string.hpp"
 #include "utils/fs.hpp"
+#include "utils/log.hpp"
 #include "engine/api.hpp"
 
 
@@ -150,8 +151,7 @@ int MainWindow::handle(int event)
 void MainWindow::refresh()
 {
 	const engine::State s = engine::api::getCurrentState();
-	if (s.valid)
-		m_counter.refresh(s.position, 666);
+	m_counter.refresh(s.position, 666);
 }
 
 

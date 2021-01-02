@@ -31,7 +31,7 @@ int main()
 		g_model.state.valid = true;
 
 		/* Parse incoming commands from main thread, if any. */
-		g_model.applyChanges();
+		g_model.rt_applyChanges();
 
 		if (g_model.state.status != ReadStatus::PLAY || g_model.layout.audioFile == nullptr)
 			return;
