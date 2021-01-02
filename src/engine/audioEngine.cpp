@@ -15,24 +15,21 @@ unsigned bufferSize_ = 0;
 /* -------------------------------------------------------------------------- */
 
 
-int rtCallback_(void* out, void* in, unsigned bufferSize, double streamTime, 
-	          RtAudioStreamStatus status, void *userData)
+int rtCallback_(void* out, void* /*in*/, unsigned bufferSize, double /*streamTime*/, 
+	          RtAudioStreamStatus /*status*/, void* /*userData*/)
 {
 	assert(callback_ != nullptr);
 
-	AudioBuffer bufferOut, bufferIn;
+	AudioBuffer bufferOut;
 	bufferOut.setData(static_cast<float*>(out), bufferSize, /*G_MAX_IO_CHANS TODO */2);
-	bufferIn.setData(static_cast<float*>(in), bufferSize, /*G_MAX_IO_CHANS TODO */2);
-
 	bufferOut.clear();
 
-	callback_(bufferOut, bufferIn, bufferSize);
+	callback_(bufferOut, bufferSize);
 
 	/* Unset data in buffers. If you don't do this, buffers go out of scope and 
 	destroy memory allocated by RtAudio ---> havoc. */
 
 	bufferOut.setData(nullptr, 0, 0);
-	bufferIn.setData(nullptr, 0, 0);
 
 	return 0;
 }

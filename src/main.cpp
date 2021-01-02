@@ -29,7 +29,7 @@ int main()
 
 
 	State state; // audio thread state
-	kernel::Callback cb = [&state] (AudioBuffer& out, AudioBuffer& in, Frame bufferSize)
+	kernel::Callback cb = [&state] (AudioBuffer& out, Frame bufferSize)
 	{
 		while (auto o = g_queue_mainToAudio.pop())
 		{
