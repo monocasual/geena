@@ -10,19 +10,17 @@
 
 namespace geena::engine
 {
-struct Layout
-{
-    float      pitch = 1.0f;
-    AudioFile* audioFile = nullptr;
-
-    std::atomic<ReadStatus>* status; 
-    std::atomic<Frame>*      position;      
-};
-
 struct State
 {
     std::atomic<ReadStatus> status{ReadStatus::STOP};
     std::atomic<Frame>      position{0};
+};
+
+struct Layout
+{
+    float      pitch     = 1.0f;
+    AudioFile* audioFile = nullptr;
+    State*     state     = nullptr;
 };
 
 struct Data

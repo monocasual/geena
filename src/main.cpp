@@ -18,17 +18,15 @@ int main()
 
 	onSwapLayout([](Layout& layout)
 	{
-		engine::State& state = engine::getState();
-		layout.status   = &state.status; 
-		layout.position = &state.position;
+		layout.state = &engine::getState();
 	});
 
 	engine::kernel::Callback cb = [] (engine::AudioBuffer& out, Frame bufferSize)
 	{
 		const engine::Layout& layout = engine::rt_lock();
 
-		ReadStatus status   = layout.status->load();
-		Frame      position = layout.position->load();
+		ReadStatus status   = layout.state->status.load();
+		Frame      position = layout.state->position.load();
 
 		if (status != ReadStatus::PLAY || layout.audioFile == nullptr)
 		{
@@ -50,8 +48,8 @@ int main()
 			position = 0;
 		}
 
-		layout.status->store(status);
-		layout.position->store(position);
+		layout.state->status.store(status);
+		layout.state->position.store(position);
 
 		engine::rt_unlock();
 	};
