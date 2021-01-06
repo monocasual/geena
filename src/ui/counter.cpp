@@ -10,7 +10,6 @@ Counter::Counter(int x, int y, int w, int h)
 , m_position(0)
 , m_length  (0)
 {
-
 }
 
 
@@ -19,7 +18,7 @@ Counter::Counter(int x, int y, int w, int h)
 
 void Counter::draw()
 {
-    float percent = (m_position / (float) m_length) * 100;
+    float percent = m_length > 0 ? (m_position / (float) m_length) * 100 : 0;
 
     std::string s = std::to_string(m_position) + " / " + std::to_string(m_length) 
                   + " - " + std::to_string(percent) + " %";

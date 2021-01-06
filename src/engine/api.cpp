@@ -63,17 +63,29 @@ bool loadAudioFile(std::string path)
     if (!res)
         return false;
     
-    engine::Data& data = engine::getData();
-    data.audioFile = std::move(res.value());
+    engine::getData().audioFile = std::move(res.value());
 
-	onSwapLayout([&data](Layout& layout)
+	onSwapLayout([](Layout& layout)
 	{
-		layout.audioFile = &data.audioFile;
+		layout.audioFile = &engine::getData().audioFile;
 	});
 
     play();
 
     return true;
+}
+
+
+void unloadAudioFile()
+{
+	/* Layout first, then data. */
+	onSwapLayout([](Layout& layout)
+	{
+		layout.audioFile = nullptr;
+	});	
+
+	engine::getData().audioFile = {};
+	rewind();
 }
 
 
@@ -91,7 +103,7 @@ void setPitch(PitchDir dir)
 
 void nudgePitch_begin(PitchDir dir)
 {
-	onSwapLayout([&pitchOld_, dir](Layout& layout)
+	onSwapLayout([dir](Layout& layout)
 	{
 		pitchOld_ = layout.pitch;
 		layout.pitch = pitchOld_ + (dir == PitchDir::UP ? G_PITCH_NUDGE : -G_PITCH_NUDGE);
@@ -103,7 +115,7 @@ void nudgePitch_end()
 {
     assert(pitchOld_ != 0.0); // Must follow a pitchNudge_begin call
    
-	onSwapLayout([&pitchOld_](Layout& layout)
+	onSwapLayout([](Layout& layout)
 	{
 		layout.pitch = pitchOld_;
 	});

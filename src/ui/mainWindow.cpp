@@ -80,6 +80,7 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 : Fl_Window(x, y, w, h)
 , m_btn_playPause(8,   216, 100, 100, "Play/Pause")
 , m_btn_rewind   (118, 216, 100, 100, "Rewind")
+, m_btn_unload   (228, 216, 100, 100, "Unload")
 , m_counter      (8,   8, w - 16, 200)
 {
 	end();
@@ -96,6 +97,10 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 		engine::api::rewind(); 
 	});
 
+	m_btn_unload.callback([] (Fl_Widget* /*w*/, void* /*v*/) 
+	{ 
+		engine::api::unloadAudioFile(); 
+	});
 	show();
 }
 

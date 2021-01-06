@@ -24,6 +24,7 @@ private:
 
 	Fl_Button m_btn_playPause;
 	Fl_Button m_btn_rewind;
+	Fl_Button m_btn_unload;
 	Counter   m_counter;
 };
 } // geena::ui::

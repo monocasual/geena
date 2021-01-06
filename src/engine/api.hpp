@@ -11,6 +11,7 @@ void stop();
 void playPauseToggle();
 void rewind();
 bool loadAudioFile(std::string path);
+void unloadAudioFile();
 void setPitch(PitchDir dir);
 void nudgePitch_begin(PitchDir dir);
 void nudgePitch_end();
