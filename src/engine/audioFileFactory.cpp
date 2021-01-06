@@ -44,7 +44,7 @@ bool resample(AudioBuffer& b, int oldSampleRate, int newSampleRate)
 /* -------------------------------------------------------------------------- */
 
 
-std::shared_ptr<AudioFile> makeAudioFile(std::string path, int sampleRate)
+std::optional<AudioFile> makeAudioFile(std::string path, int sampleRate)
 {
     SF_INFO header;
     SNDFILE* sndfile = sf_open(path.c_str(), SFM_READ, &header);
@@ -74,6 +74,6 @@ std::shared_ptr<AudioFile> makeAudioFile(std::string path, int sampleRate)
 		}
 
 	G_DEBUG("AudioFile ready");
-    return std::make_shared<AudioFile>(std::move(buffer));
+    return {AudioFile(std::move(buffer))};
 }
 } // geena::engine::

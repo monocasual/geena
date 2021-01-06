@@ -150,8 +150,7 @@ int MainWindow::handle(int event)
 
 void MainWindow::refresh()
 {
-	const engine::State s = engine::api::getCurrentState();
-	m_counter.refresh(s.position, 666);
+	m_counter.refresh(engine::api::getCurrentPosition(), engine::api::getAudioFileLength());
 }
 
 

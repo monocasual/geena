@@ -15,5 +15,6 @@ void setPitch(PitchDir dir);
 void nudgePitch_begin(PitchDir dir);
 void nudgePitch_end();
 
-State getCurrentState();
+Frame getCurrentPosition();
+Frame getAudioFileLength();
 } // geena::engine::api::

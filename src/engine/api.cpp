@@ -8,15 +8,7 @@
 #include "api.hpp"
 
 
-namespace geena::engine
-{
-extern Model g_model;
-/*
-extern Queue<State, 32> g_queue_mainToAudio;
-extern Queue<State, 32> g_queue_audioToMain;
-extern State            g_state; // main thread state
-*/
-namespace api
+namespace geena::engine::api
 {
 namespace
 {
@@ -31,22 +23,16 @@ float pitchOld_ = 0.0;
 
 void play()
 {
-    g_model.requestChange([]()
-    {
-        g_model.state.status = ReadStatus::PLAY;
-    });
+    engine::getState().status.store(ReadStatus::PLAY);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void stop()
+void pause()
 {
-    g_model.requestChange([]()
-    {
-        g_model.state.status = ReadStatus::STOP;
-    });
+    engine::getState().status.store(ReadStatus::PAUSE);
 }
 
 
@@ -55,10 +41,7 @@ void stop()
 
 void playPauseToggle()
 {
-    g_model.requestChange([]()
-    {
-        g_model.state.status = g_model.state.status == ReadStatus::PLAY ? ReadStatus::PAUSE : ReadStatus::PLAY; 
-    });
+    engine::getState().status.load() == ReadStatus::PLAY ? pause() : play();
 }
 
 
@@ -67,10 +50,7 @@ void playPauseToggle()
 
 void rewind()
 {
-    g_model.requestChange([]()
-    {
-        g_model.state.position = 0;
-    });
+    engine::getState().position.store(0);
 }
 
 
@@ -79,14 +59,18 @@ void rewind()
 
 bool loadAudioFile(std::string path)
 {
-    std::shared_ptr<AudioFile> audioFile = engine::makeAudioFile(path, 44100);
-    if (audioFile == nullptr)
+    auto res = engine::makeAudioFile(path, 44100);
+    if (!res)
         return false;
+    
+    engine::Layout& layout = engine::getLayout();
+    engine::Data&   data   = engine::getData();
+    data.audioFile   = std::move(res.value());
+    layout.audioFile = &data.audioFile;
 
-    g_model.requestChange([audioFile = std::move(audioFile)]()
-    {
-        g_model.layout.audioFile = audioFile;
-    });
+    engine::swapLayout(layout);
+
+    play();
 
     return true;
 }
@@ -97,44 +81,45 @@ bool loadAudioFile(std::string path)
 
 void setPitch(PitchDir dir)
 {
-    g_model.requestChange([dir]()
-    {
-        g_model.layout.pitch += dir == PitchDir::UP ? G_PITCH_DELTA : -G_PITCH_DELTA;
-    });
+    engine::Layout& layout = engine::getLayout();
+    layout.pitch += dir == PitchDir::UP ? G_PITCH_DELTA : -G_PITCH_DELTA;
+    engine::swapLayout(layout);
 }
 
 
 void nudgePitch_begin(PitchDir dir)
 {
-    /*
-    g_model.queueIn.push([dir]()
-    {
-        g_model.state.pitch += dir == PitchDir::UP ? G_PITCH_DELTA : -G_PITCH_DELTA;
-    });
-
-    onPushState_([dir] (State& s) 
-    { 
-        pitchOld_ = s.pitch;
-        s.pitch = pitchOld_ + (dir == PitchDir::UP ? G_PITCH_NUDGE : -G_PITCH_NUDGE);
-    });*/
+    engine::Layout& layout = engine::getLayout();
+    pitchOld_ = layout.pitch;
+    layout.pitch = pitchOld_ + (dir == PitchDir::UP ? G_PITCH_NUDGE : -G_PITCH_NUDGE);
+    engine::swapLayout(layout);
 }
 
 
 void nudgePitch_end()
 {
-    /*assert(pitchOld_ != 0.0); // Must follow a pitchNudge_begin call
+    assert(pitchOld_ != 0.0); // Must follow a pitchNudge_begin call
+   
+    engine::Layout& layout = engine::getLayout();
+    layout.pitch = pitchOld_;
+    engine::swapLayout(layout);
 
-    onPushState_([] (State& s) { s.pitch = pitchOld_; });
-    pitchOld_ = 0.0;*/
+    pitchOld_ = 0.0;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-State getCurrentState()
+Frame getCurrentPosition()
 {
-    return g_model.requestState();
+    return engine::getState().position.load();
 }
-} // geena::engine::
+
+Frame getAudioFileLength()
+{
+    const AudioFile& f = engine::getData().audioFile;
+    return f.isValid() ? f.countFrames() : 0;
+}
+
 } // geena::engine::api::

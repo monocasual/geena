@@ -12,62 +12,29 @@ namespace geena::engine
 {
 struct Layout
 {
-    std::shared_ptr<AudioFile> audioFile;
-    float                      pitch = 1.0f;
+    float      pitch = 1.0f;
+    AudioFile* audioFile = nullptr;
+
+    std::atomic<ReadStatus>* status; 
+    std::atomic<Frame>*      position;      
 };
 
 struct State
 {
-    ReadStatus status   = ReadStatus::STOP;
-    Frame      position = 0;
+    std::atomic<ReadStatus> status{ReadStatus::STOP};
+    std::atomic<Frame>      position{0};
 };
 
-struct Buffers
+struct Data
 {
-    AudioBuffer audioBuffer;
+    AudioFile audioFile;
 };
 
-struct Model
-{
-    Layout  layout;  // NEVER access this from the main thread directly
-    State   state;   // NEVER access this from the main thread directly
-    Buffers buffers; // NEVER access this from the main thread directly
+const Layout& rt_lock();
+void          rt_unlock();
 
-    /* rt_applyChanges
-    Called by **Audio thread**, applies all the pending changes previously
-    required by the main thread. */
-
-    void rt_applyChanges();
-
-    /* requestChange
-    Called by **Main thread**, requires to apply the function f to the current
-    model. Will be performed later on by Audio thread. No allocation, no 
-    exception throwing, always move! */
-
-    void requestChange(std::function<void()>&& f);
-
-    /* requestLayout
-    Called by **Main thread**, asks a copy of the whole layout. Will be copied
-    and returned by the Audio thread later on. */
-
-    Layout requestLayout();
-
-    /* requestState
-    Called by **Main thread**, asks a copy of the state for UI refresh. Will
-    be copied and returned by the Audio thread later on. */
-
-    State requestState();
-
-private:
-
-    Queue<std::function<void()>, 32> m_queueIn;
-    Queue<Layout, 32>                m_queueOutLayout;
-    Queue<State, 32>                 m_queueOutState;
-
-    /* m_stateOut
-    Local copies of State and Layout objects used for request calls. */
-
-    Layout m_layoutOut;
-    State  m_stateOut;
-};
+Layout& getLayout();
+State&  getState();
+Data&   getData();
+void    swapLayout(Layout l);
 } // geena::engine::
