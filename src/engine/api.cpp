@@ -63,12 +63,13 @@ bool loadAudioFile(std::string path)
     if (!res)
         return false;
     
-    engine::Layout& layout = engine::getLayout();
-    engine::Data&   data   = engine::getData();
-    data.audioFile   = std::move(res.value());
-    layout.audioFile = &data.audioFile;
+    engine::Data& data = engine::getData();
+    data.audioFile = std::move(res.value());
 
-    engine::swapLayout(layout);
+	onSwapLayout([&data](Layout& layout)
+	{
+		layout.audioFile = &data.audioFile;
+	});
 
     play();
 
@@ -81,18 +82,20 @@ bool loadAudioFile(std::string path)
 
 void setPitch(PitchDir dir)
 {
-    engine::Layout& layout = engine::getLayout();
-    layout.pitch += dir == PitchDir::UP ? G_PITCH_DELTA : -G_PITCH_DELTA;
-    engine::swapLayout(layout);
+	onSwapLayout([dir](Layout& layout)
+	{
+		layout.pitch += dir == PitchDir::UP ? G_PITCH_DELTA : -G_PITCH_DELTA;
+	});
 }
 
 
 void nudgePitch_begin(PitchDir dir)
 {
-    engine::Layout& layout = engine::getLayout();
-    pitchOld_ = layout.pitch;
-    layout.pitch = pitchOld_ + (dir == PitchDir::UP ? G_PITCH_NUDGE : -G_PITCH_NUDGE);
-    engine::swapLayout(layout);
+	onSwapLayout([&pitchOld_, dir](Layout& layout)
+	{
+		pitchOld_ = layout.pitch;
+		layout.pitch = pitchOld_ + (dir == PitchDir::UP ? G_PITCH_NUDGE : -G_PITCH_NUDGE);
+	});
 }
 
 
@@ -100,9 +103,10 @@ void nudgePitch_end()
 {
     assert(pitchOld_ != 0.0); // Must follow a pitchNudge_begin call
    
-    engine::Layout& layout = engine::getLayout();
-    layout.pitch = pitchOld_;
-    engine::swapLayout(layout);
+	onSwapLayout([&pitchOld_](Layout& layout)
+	{
+		layout.pitch = pitchOld_;
+	});
 
     pitchOld_ = 0.0;
 }

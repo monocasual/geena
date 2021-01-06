@@ -16,11 +16,12 @@ int main()
 	using namespace geena::engine;
 	using namespace geena::ui;
 
-	engine::Layout& layout = engine::getLayout();
-	engine::State&  state  = engine::getState();
-	layout.status   = &state.status; 
-	layout.position = &state.position;
-	engine::swapLayout(layout); 
+	onSwapLayout([](Layout& layout)
+	{
+		engine::State& state = engine::getState();
+		layout.status   = &state.status; 
+		layout.position = &state.position;
+	});
 
 	engine::kernel::Callback cb = [] (engine::AudioBuffer& out, Frame bufferSize)
 	{

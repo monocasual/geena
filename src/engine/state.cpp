@@ -15,6 +15,35 @@ State                 state_;
 Data                  data_;
 std::atomic<int>      index_{0};
 int                   currIndex_ = 0; 
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void swapLayout_(Layout l)
+{
+    int current = index_.load();
+
+    /* Copy the new Layout into the non-rt slot (!current). */
+    layouts_[(current & BIT_INDEX) ^ 1] = l;
+
+    /* Wait for the audio thread to finish, i.e. until the BUSY bit becomes
+    zero. Only then, swap indexes. This will let the audio thread to pick 
+    the updated layout on its next cycle. */
+    int desired;
+    do 
+    {
+        current = current & ~BIT_BUSY;               // Expected: current value without busy bit set
+        desired = (current ^ BIT_INDEX) & BIT_INDEX; // Desired: flipped (xor) index
+    }
+    while (!index_.compare_exchange_weak(current, desired));
+
+    current = desired;
+
+    /* Copy the new layout again in the non-rt slot, which is now the old
+    one coming from the audio thread. */ 
+    layouts_[(current & BIT_INDEX) ^ 1] = l;
+}
 } // {anonymous}
 
 
@@ -48,40 +77,18 @@ Layout& getLayout()
 }
 
 
-State& getState()
+State& getState() { return state_; }
+Data& getData()   { return data_; }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void onSwapLayout(std::function<void(Layout&)> f)
 {
-    return state_;
+	Layout& layout = getLayout();
+    f(layout);
+	swapLayout_(layout);     
 }
 
-
-Data& getData()
-{
-    return data_;
-}
-
-
-void swapLayout(Layout l)
-{
-    int current = index_.load();
-
-    /* Copy the new Layout into the non-rt slot (!current). */
-    layouts_[(current & BIT_INDEX) ^ 1] = l;
-
-    /* Wait for the audio thread to finish, i.e. until the BUSY bit becomes
-    zero. Only then, swap indexes. This will let the audio thread to pick 
-    the updated layout on its next cycle. */
-    int desired;
-    do 
-    {
-        current = current & ~BIT_BUSY;               // Expected: current value without busy bit set
-        desired = (current ^ BIT_INDEX) & BIT_INDEX; // Desired: flipped (xor) index
-    }
-    while (!index_.compare_exchange_weak(current, desired));
-
-    current = desired;
-
-    /* Copy the new layout again in the non-rt slot, which is now the old
-    one coming from the audio thread. */ 
-    layouts_[(current & BIT_INDEX) ^ 1] = l;
-}
 } // geena::engine::

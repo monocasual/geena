@@ -36,5 +36,5 @@ void          rt_unlock();
 Layout& getLayout();
 State&  getState();
 Data&   getData();
-void    swapLayout(Layout l);
+void    onSwapLayout(std::function<void(Layout&)> f);
 } // geena::engine::
