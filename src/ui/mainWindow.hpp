@@ -5,6 +5,7 @@
 #include <FL/Fl_Button.H>
 #include "engine/state.hpp"
 #include "counter.hpp"
+#include "progress.hpp"
 
 
 namespace geena::ui
@@ -26,5 +27,6 @@ private:
 	Fl_Button m_btn_rewind;
 	Fl_Button m_btn_unload;
 	Counter   m_counter;
+	Progress  m_progress;
 };
 } // geena::ui::

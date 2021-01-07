@@ -135,6 +135,15 @@ void nudgePitch_end()
 /* -------------------------------------------------------------------------- */
 
 
+void goToFrame(Frame f)
+{
+	g_state.position.store(f);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 Frame getCurrentPosition()
 {
     return g_state.position.load();

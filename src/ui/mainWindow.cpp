@@ -81,7 +81,8 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 , m_btn_playPause(8,   216, 100, 100, "Play/Pause")
 , m_btn_rewind   (118, 216, 100, 100, "Rewind")
 , m_btn_unload   (228, 216, 100, 100, "Unload")
-, m_counter      (8,   8, w - 16, 200)
+, m_counter      (8,   8, w - 16, 100)
+, m_progress     (8, 118, w - 16, 20)
 {
 	end();
 
@@ -101,6 +102,12 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 	{ 
 		engine::api::unloadAudioFile(); 
 	});
+
+	m_progress.onClick = [] (Frame f)
+	{
+		engine::api::goToFrame(f);
+	};
+
 	show();
 }
 
@@ -155,7 +162,10 @@ int MainWindow::handle(int event)
 
 void MainWindow::refresh()
 {
-	m_counter.refresh(engine::api::getCurrentPosition(), engine::api::getAudioFileLength());
+	Frame position = engine::api::getCurrentPosition();
+	Frame length   = engine::api::getAudioFileLength();
+	m_counter.refresh(position, length);
+	m_progress.refresh(position, length);
 }
 
 

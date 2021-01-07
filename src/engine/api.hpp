@@ -15,6 +15,7 @@ void unloadAudioFile();
 void setPitch(PitchDir dir);
 void nudgePitch_begin(PitchDir dir);
 void nudgePitch_end();
+void goToFrame(Frame f);
 
 Frame getCurrentPosition();
 Frame getAudioFileLength();
