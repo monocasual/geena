@@ -10,29 +10,32 @@
 #include "utils/log.hpp"
 
 
+namespace geena::engine
+{
+State           g_state;
+Data            g_data;
+Swapper<Layout> g_layout;
+}
+
 int main()
 {
 	using namespace geena;
-	using namespace geena::engine;
-	using namespace geena::ui;
 
-	onSwapLayout([](Layout& layout)
+	engine::g_layout.onSwap([](engine::Layout& layout)
 	{
-		layout.state = &engine::getState();
+		layout.state = &engine::g_state;
 	});
 
 	engine::kernel::Callback cb = [] (engine::AudioBuffer& out, Frame bufferSize)
 	{
-		const engine::Layout& layout = engine::rt_lock();
+		engine::Swapper<engine::Layout>::ScopedLock lock(engine::g_layout);
+		const engine::Layout& layout = *lock;
 
 		ReadStatus status   = layout.state->status.load();
 		Frame      position = layout.state->position.load();
 
 		if (status != ReadStatus::PLAY || layout.audioFile == nullptr)
-		{
-			engine::rt_unlock();
 			return;
-		}
 
 		const Frame from = position;
 		const Frame to   = position + bufferSize;
@@ -40,7 +43,7 @@ int main()
 		
 		G_DEBUG("Render [" << from << ", " << to << ") - " << max);
 
-		position = renderer::render(*layout.audioFile, out, layout.pitch, from, bufferSize);
+		position = engine::renderer::render(*layout.audioFile, out, layout.pitch, from, bufferSize);
 
 		if (to > max)
 		{
@@ -50,17 +53,15 @@ int main()
 
 		layout.state->status.store(status);
 		layout.state->position.store(position);
-
-		engine::rt_unlock();
 	};
 
-	renderer::init();
-	kernel::init({ 0, 2, 44100, 4096 }, cb);
+	engine::renderer::init();
+	engine::kernel::init({ 0, 2, 44100, 4096 }, cb);
 
-	MainWindow w(0, 0, 640, 480);
+	ui::MainWindow w(0, 0, 640, 480);
 	int res = w.run();
 
-	kernel::close();
+	engine::kernel::close();
 
 	return res;
 }

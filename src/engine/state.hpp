@@ -6,6 +6,7 @@
 #include "queue.hpp"
 #include "types.hpp"
 #include "audioFile.hpp"
+#include "swapper.hpp"
 
 
 namespace geena::engine
@@ -27,12 +28,4 @@ struct Data
 {
     AudioFile audioFile;
 };
-
-const Layout& rt_lock();
-void          rt_unlock();
-
-Layout& getLayout();
-State&  getState();
-Data&   getData();
-void    onSwapLayout(std::function<void(Layout&)> f);
 } // geena::engine::
