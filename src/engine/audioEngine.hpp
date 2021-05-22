@@ -5,7 +5,7 @@
 
 namespace geena::engine::kernel
 {
-using Callback = std::function<void(monocasual::AudioBuffer&, unsigned)>;
+using Callback = std::function<void(mcl::AudioBuffer&, unsigned)>;
 
 struct Config
 {

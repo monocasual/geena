@@ -4,7 +4,7 @@
 #include <samplerate.h>
 #include <sndfile.h>
 
-using namespace monocasual;
+using namespace mcl;
 
 namespace geena::engine
 {

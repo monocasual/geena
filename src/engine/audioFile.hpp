@@ -11,14 +11,14 @@ class AudioFile
 {
 public:
 	AudioFile();
-	AudioFile(monocasual::AudioBuffer&& data);
+	AudioFile(mcl::AudioBuffer&& data);
 
 	bool                           isValid() const;
 	Frame                          countFrames() const;
-	void                           render(monocasual::AudioBuffer& b, Frame start, Frame count, Frame offset = 0) const;
-	const monocasual::AudioBuffer& getBuffer() const;
+	void                           render(mcl::AudioBuffer& b, Frame start, Frame count, Frame offset = 0) const;
+	const mcl::AudioBuffer& getBuffer() const;
 
 private:
-	monocasual::AudioBuffer m_data;
+	mcl::AudioBuffer m_data;
 };
 } // namespace geena::engine

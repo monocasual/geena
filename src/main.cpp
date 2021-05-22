@@ -10,7 +10,7 @@
 #include "utils/log.hpp"
 #include <iostream>
 
-using namespace monocasual;
+using namespace mcl;
 
 namespace geena::engine
 {

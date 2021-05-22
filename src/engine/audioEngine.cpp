@@ -2,7 +2,7 @@
 #include <RtAudio.h>
 #include <cassert>
 
-using namespace monocasual;
+using namespace mcl;
 
 namespace geena::engine::kernel
 {

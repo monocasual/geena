@@ -7,5 +7,5 @@
 namespace geena::engine::renderer
 {
 void  init();
-Frame render(const AudioFile& f, monocasual::AudioBuffer& out, float pitch, Frame position, Frame bufferSize);
+Frame render(const AudioFile& f, mcl::AudioBuffer& out, float pitch, Frame position, Frame bufferSize);
 } // namespace geena::engine::renderer

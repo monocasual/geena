@@ -8,6 +8,8 @@
 #include <cassert>
 #include <functional>
 
+using namespace mcl;
+
 namespace geena::engine
 {
 extern State                 g_state;

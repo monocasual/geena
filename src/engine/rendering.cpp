@@ -2,7 +2,7 @@
 #include <cmath>
 #include <samplerate.h>
 
-using namespace monocasual;
+using namespace mcl;
 
 namespace geena::engine::renderer
 {
