@@ -3,11 +3,9 @@
 #include "deps/audio-buffer/src/audioBuffer.hpp"
 #include <functional>
 
-using namespace monocasual;
-
 namespace geena::engine::kernel
 {
-using Callback = std::function<void(AudioBuffer&, unsigned)>;
+using Callback = std::function<void(monocasual::AudioBuffer&, unsigned)>;
 
 struct Config
 {

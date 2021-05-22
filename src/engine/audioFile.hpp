@@ -5,22 +5,20 @@
 #include <memory>
 #include <string>
 
-using namespace monocasual;
-
 namespace geena::engine
 {
 class AudioFile
 {
 public:
 	AudioFile();
-	AudioFile(AudioBuffer&& data);
+	AudioFile(monocasual::AudioBuffer&& data);
 
-	bool               isValid() const;
-	Frame              countFrames() const;
-	void               render(AudioBuffer& b, Frame start, Frame count, Frame offset = 0) const;
-	const AudioBuffer& getBuffer() const;
+	bool                           isValid() const;
+	Frame                          countFrames() const;
+	void                           render(monocasual::AudioBuffer& b, Frame start, Frame count, Frame offset = 0) const;
+	const monocasual::AudioBuffer& getBuffer() const;
 
 private:
-	AudioBuffer m_data;
+	monocasual::AudioBuffer m_data;
 };
 } // namespace geena::engine

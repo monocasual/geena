@@ -2,6 +2,8 @@
 #include <cmath>
 #include <samplerate.h>
 
+using namespace monocasual;
+
 namespace geena::engine::renderer
 {
 namespace

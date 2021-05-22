@@ -1,6 +1,7 @@
 #pragma once
 
 #include "types.hpp"
+#include <string>
 
 namespace geena::engine::api
 {
