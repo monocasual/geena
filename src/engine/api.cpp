@@ -1,7 +1,6 @@
 #include "api.hpp"
 #include "audioFileFactory.hpp"
 #include "const.hpp"
-#include "queue.hpp"
 #include "src/deps/atomic-swapper/src/atomic-swapper.hpp"
 #include "state.hpp"
 #include "utils/log.hpp"
