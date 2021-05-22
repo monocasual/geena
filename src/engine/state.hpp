@@ -2,12 +2,9 @@
 
 
 #include <memory>
-#include <functional>
-#include "queue.hpp"
+#include <atomic>
 #include "types.hpp"
 #include "audioFile.hpp"
-#include "swapper.hpp"
-
 
 namespace geena::engine
 {

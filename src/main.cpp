@@ -8,6 +8,7 @@
 #include "engine/queue.hpp"
 #include "ui/mainWindow.hpp"
 #include "utils/log.hpp"
+#include "src/deps/atomic-swapper/src/atomic-swapper.hpp"
 
 
 using namespace monocasual;
@@ -15,24 +16,22 @@ using namespace monocasual;
 
 namespace geena::engine
 {
-State           g_state;
-Data            g_data;
-Swapper<Layout> g_layout;
+State                 g_state;
+Data                  g_data;
+AtomicSwapper<Layout> g_layout;
 }
 
 int main()
 {
 	using namespace geena;
 
-	engine::g_layout.onSwap([](engine::Layout& layout)
-	{
-		layout.state = &engine::g_state;
-	});
+	engine::g_layout.get().state = &engine::g_state;
+	engine::g_layout.swap();
 
 	engine::kernel::Callback cb = [] (AudioBuffer& out, Frame bufferSize)
 	{
-		engine::Swapper<engine::Layout>::ScopedLock lock(engine::g_layout);
-		const engine::Layout& layout = *lock;
+		AtomicSwapper<engine::Layout>::RtLock lock(engine::g_layout);
+		const engine::Layout& layout = lock.get();
 
 		ReadStatus status   = layout.state->status.load();
 		Frame      position = layout.state->position.load();
