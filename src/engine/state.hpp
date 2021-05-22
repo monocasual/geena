@@ -1,28 +1,27 @@
 #pragma once
 
-
-#include <memory>
-#include <atomic>
-#include "types.hpp"
 #include "audioFile.hpp"
+#include "types.hpp"
+#include <atomic>
+#include <memory>
 
 namespace geena::engine
 {
 struct State
 {
-    std::atomic<ReadStatus> status{ReadStatus::STOP};
-    std::atomic<Frame>      position{0};
+	std::atomic<ReadStatus> status{ReadStatus::STOP};
+	std::atomic<Frame>      position{0};
 };
 
 struct Layout
 {
-    float      pitch     = 1.0f;
-    AudioFile* audioFile = nullptr;
-    State*     state     = nullptr;
+	float      pitch     = 1.0f;
+	AudioFile* audioFile = nullptr;
+	State*     state     = nullptr;
 };
 
 struct Data
 {
-    AudioFile audioFile;
+	AudioFile audioFile;
 };
-} // geena::engine::
+} // namespace geena::engine

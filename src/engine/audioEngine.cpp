@@ -1,10 +1,8 @@
-#include <cassert>
-#include <RtAudio.h>
 #include "audioEngine.hpp"
-
+#include <RtAudio.h>
+#include <cassert>
 
 using namespace monocasual;
-
 
 namespace geena::engine::kernel
 {
@@ -14,34 +12,30 @@ RtAudio  rt_;
 Callback callback_   = nullptr;
 unsigned bufferSize_ = 0;
 
-
 /* -------------------------------------------------------------------------- */
 
-
-int rtCallback_(void* out, void* /*in*/, unsigned bufferSize, double /*streamTime*/, 
-	          RtAudioStreamStatus /*status*/, void* /*userData*/)
+int rtCallback_(void* out, void* /*in*/, unsigned bufferSize, double /*streamTime*/,
+    RtAudioStreamStatus /*status*/, void* /*userData*/)
 {
 	assert(callback_ != nullptr);
 
-	AudioBuffer bufferOut(static_cast<float*>(out), bufferSize, /*G_MAX_IO_CHANS TODO */2);
+	AudioBuffer bufferOut(static_cast<float*>(out), bufferSize, /*G_MAX_IO_CHANS TODO */ 2);
 	bufferOut.clear();
 
 	callback_(bufferOut, bufferSize);
 
 	return 0;
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 bool init(Config c, Callback f)
 {
 	RtAudio::StreamParameters params;
-	params.deviceId     = rt_.getDefaultOutputDevice(); // TODO 
+	params.deviceId     = rt_.getDefaultOutputDevice(); // TODO
 	params.nChannels    = c.channels;
 	params.firstChannel = 0;
 
@@ -61,21 +55,19 @@ bool init(Config c, Callback f)
 	}
 }
 
-
 /* -------------------------------------------------------------------------- */
-
 
 void close()
 {
-	try 
+	try
 	{
 		rt_.stopStream();
 	}
-	catch (RtAudioError& e) 
+	catch (RtAudioError& e)
 	{
 		e.printMessage();
 	}
-	if (rt_.isStreamOpen()) 
+	if (rt_.isStreamOpen())
 		rt_.closeStream();
 }
-} // geena::engine::kernel::
+} // namespace geena::engine::kernel

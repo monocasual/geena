@@ -1,8 +1,6 @@
 #pragma once
 
-
 #include "types.hpp"
-
 
 namespace geena::engine::api
 {
@@ -19,4 +17,4 @@ void goToFrame(Frame f);
 
 Frame getCurrentPosition();
 Frame getAudioFileLength();
-} // geena::engine::api::
+} // namespace geena::engine::api

@@ -1,8 +1,6 @@
 #pragma once
 
-
 #include <type_traits>
-
 
 namespace geena::utils::math
 {
@@ -14,7 +12,7 @@ TO map(TI x, TI b, TO z)
 {
 	static_assert(std::is_arithmetic_v<TI>);
 	static_assert(std::is_arithmetic_v<TO>);
-	
-	return static_cast<TO>((x / (double) b) * z);
+
+	return static_cast<TO>((x / (double)b) * z);
 }
-} // geena::utils::string 
+} // namespace geena::utils::math

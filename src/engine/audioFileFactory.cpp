@@ -1,8 +1,8 @@
-#include <cmath>
-#include <sndfile.h>
-#include <samplerate.h>
-#include "utils/log.hpp"
 #include "audioFileFactory.hpp"
+#include "utils/log.hpp"
+#include <cmath>
+#include <samplerate.h>
+#include <sndfile.h>
 
 using namespace monocasual;
 
@@ -12,7 +12,7 @@ namespace
 {
 bool resample(AudioBuffer& b, int oldSampleRate, int newSampleRate)
 {
-	float ratio = newSampleRate / (float) oldSampleRate;
+	float ratio   = newSampleRate / (float)oldSampleRate;
 	Frame newSize = static_cast<int>(std::ceil(b.countFrames() * ratio));
 
 	AudioBuffer newData(newSize, b.countChannels());
@@ -27,7 +27,8 @@ bool resample(AudioBuffer& b, int oldSampleRate, int newSampleRate)
 	G_DEBUG("Resampling: new size=" << newSize << " frames");
 
 	int ret = src_simple(&src_data, SRC_SINC_FASTEST, b.countChannels());
-	if (ret != 0) {
+	if (ret != 0)
+	{
 		G_DEBUG("Resampling error: " << src_strerror(ret));
 		return false;
 	}
@@ -36,20 +37,18 @@ bool resample(AudioBuffer& b, int oldSampleRate, int newSampleRate)
 
 	return true;
 }
-} // {anonymous}
-
+} // namespace
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
 
 std::optional<AudioFile> makeAudioFile(std::string path, int sampleRate)
 {
-    SF_INFO header;
-    SNDFILE* sndfile = sf_open(path.c_str(), SFM_READ, &header);
+	SF_INFO  header;
+	SNDFILE* sndfile = sf_open(path.c_str(), SFM_READ, &header);
 
-	if (sndfile == nullptr) 
+	if (sndfile == nullptr)
 	{
 		G_DEBUG("Can't open file " << path);
 		return {};
@@ -74,6 +73,6 @@ std::optional<AudioFile> makeAudioFile(std::string path, int sampleRate)
 		}
 
 	G_DEBUG("AudioFile ready");
-    return {AudioFile(std::move(buffer))};
+	return {AudioFile(std::move(buffer))};
 }
-} // geena::engine::
+} // namespace geena::engine

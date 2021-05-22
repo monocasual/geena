@@ -1,8 +1,7 @@
 #pragma once
 
-
-#include <functional>
 #include "deps/audio-buffer/src/audioBuffer.hpp"
+#include <functional>
 
 using namespace monocasual;
 
@@ -12,12 +11,12 @@ using Callback = std::function<void(AudioBuffer&, unsigned)>;
 
 struct Config
 {
-    int deviceId;
-    int channels;
-    int sampleRate;
-    int bufferSize;
+	int deviceId;
+	int channels;
+	int sampleRate;
+	int bufferSize;
 };
 
 bool init(Config c, Callback f);
 void close();
-} // geena::engine::kernel::
+} // namespace geena::engine::kernel
