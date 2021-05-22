@@ -31,11 +31,11 @@ list(APPEND SOURCES
 	src/ui/progress.cpp
 	src/engine/api.cpp
 	src/engine/rendering.cpp
-	src/engine/audioBuffer.cpp
 	src/engine/audioEngine.cpp
 	src/engine/audioFile.cpp
 	src/engine/audioFileFactory.cpp
-	src/engine/state.cpp)
+	src/engine/state.cpp
+	src/deps/audio-buffer/src/audioBuffer.cpp)
 list(APPEND PREPROCESSOR_DEFS 
 	__LINUX_ALSA__ 
 	__LINUX_PULSE__ 

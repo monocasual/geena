@@ -10,6 +10,9 @@
 #include "utils/log.hpp"
 
 
+using namespace monocasual;
+
+
 namespace geena::engine
 {
 State           g_state;
@@ -26,7 +29,7 @@ int main()
 		layout.state = &engine::g_state;
 	});
 
-	engine::kernel::Callback cb = [] (engine::AudioBuffer& out, Frame bufferSize)
+	engine::kernel::Callback cb = [] (AudioBuffer& out, Frame bufferSize)
 	{
 		engine::Swapper<engine::Layout>::ScopedLock lock(engine::g_layout);
 		const engine::Layout& layout = *lock;

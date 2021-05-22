@@ -3,6 +3,9 @@
 #include "audioEngine.hpp"
 
 
+using namespace monocasual;
+
+
 namespace geena::engine::kernel
 {
 namespace
@@ -20,16 +23,10 @@ int rtCallback_(void* out, void* /*in*/, unsigned bufferSize, double /*streamTim
 {
 	assert(callback_ != nullptr);
 
-	AudioBuffer bufferOut;
-	bufferOut.setData(static_cast<float*>(out), bufferSize, /*G_MAX_IO_CHANS TODO */2);
+	AudioBuffer bufferOut(static_cast<float*>(out), bufferSize, /*G_MAX_IO_CHANS TODO */2);
 	bufferOut.clear();
 
 	callback_(bufferOut, bufferSize);
-
-	/* Unset data in buffers. If you don't do this, buffers go out of scope and 
-	destroy memory allocated by RtAudio ---> havoc. */
-
-	bufferOut.setData(nullptr, 0, 0);
 
 	return 0;
 }

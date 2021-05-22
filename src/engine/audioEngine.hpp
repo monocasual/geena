@@ -2,8 +2,9 @@
 
 
 #include <functional>
-#include "audioBuffer.hpp"
+#include "deps/audio-buffer/src/audioBuffer.hpp"
 
+using namespace monocasual;
 
 namespace geena::engine::kernel
 {

@@ -10,3 +10,6 @@
 [submodule "src/deps/atomic-swapper"]
 	path = src/deps/atomic-swapper
 	url = git@github.com:monocasual/atomic-swapper.git
+[submodule "src/deps/audio-buffer"]
+	path = src/deps/audio-buffer
+	url = git@github.com:monocasual/audio-buffer.git

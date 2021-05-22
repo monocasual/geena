@@ -1,6 +1,7 @@
 #include <sndfile.h>
 #include "audioFile.hpp"
 
+using namespace monocasual;
 
 namespace geena::engine
 {
@@ -41,6 +42,7 @@ const AudioBuffer& AudioFile::getBuffer() const { return m_data; }
 
 void AudioFile::render(AudioBuffer& b, Frame start, Frame count, Frame offset) const
 {
-	b.copyData(m_data[start], count, /*CHANNEL TODO*/2, offset);
+	// TODO b.copyData(m_data[start], count, /*CHANNEL TODO*/2, offset);
+	b.set(m_data, count, start);
 }
 } // geena::engine::
