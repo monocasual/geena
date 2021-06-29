@@ -13,3 +13,6 @@
 [submodule "src/deps/audio-buffer"]
 	path = src/deps/audio-buffer
 	url = git@github.com:monocasual/audio-buffer.git
+[submodule "src/deps/mcl-utils"]
+	path = src/deps/mcl-utils
+	url = git@github.com:monocasual/mcl-utils.git

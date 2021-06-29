@@ -1,11 +1,12 @@
 #include "mainWindow.hpp"
 
 #include "const.hpp"
+#include "deps/mcl-utils/src/fs.hpp"
+#include "deps/mcl-utils/src/log.hpp"
+#include "deps/mcl-utils/src/math.hpp"
+#include "deps/mcl-utils/src/string.hpp"
 #include "engine/api.hpp"
 #include "types.hpp"
-#include "utils/fs.hpp"
-#include "utils/log.hpp"
-#include "utils/string.hpp"
 #include <FL/Fl.H>
 #include <filesystem>
 #include <iostream>
@@ -51,8 +52,8 @@ void onKeyUp_(int key)
 
 void onFileDrop_(const char* s)
 {
-	std::vector<std::string> paths = utils::string::split(s, "\n");
-	std::string              path  = utils::fs::uriToPath(paths[0]);
+	std::vector<std::string> paths = mcl::utils::string::split(s, "\n");
+	std::string              path  = mcl::utils::fs::uriToPath(paths[0]);
 	engine::api::loadAudioFile(path);
 }
 } // namespace

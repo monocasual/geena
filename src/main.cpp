@@ -1,12 +1,12 @@
+#include "deps/atomic-swapper/src/atomic-swapper.hpp"
+#include "deps/mcl-utils/src/log.hpp"
 #include "engine/audioEngine.hpp"
 #include "engine/audioFile.hpp"
 #include "engine/audioFileFactory.hpp"
 #include "engine/rendering.hpp"
 #include "engine/state.hpp"
-#include "src/deps/atomic-swapper/src/atomic-swapper.hpp"
 #include "types.hpp"
 #include "ui/mainWindow.hpp"
-#include "utils/log.hpp"
 #include <iostream>
 
 using namespace mcl;
@@ -39,7 +39,7 @@ int main()
 		const Frame to   = position + bufferSize;
 		const Frame max  = layout.audioFile->countFrames();
 
-		G_DEBUG("Render [" << from << ", " << to << ") - " << max);
+		ML_DEBUG("Render [" << from << ", " << to << ") - " << max);
 
 		position = engine::renderer::render(*layout.audioFile, out, layout.pitch, from, bufferSize);
 

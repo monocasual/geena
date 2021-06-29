@@ -1,5 +1,5 @@
 #include "progress.hpp"
-#include "utils/math.hpp"
+#include "deps/mcl-utils/src/math.hpp"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
@@ -52,11 +52,11 @@ void Progress::refresh(Frame position, Frame length)
 
 int Progress::frameToPixel(Frame f)
 {
-	return utils::math::map(f, m_length, w());
+	return mcl::utils::math::map(f, m_length, w());
 }
 
 Frame Progress::pixelToFrame(int p)
 {
-	return utils::math::map(p, w(), m_length);
+	return mcl::utils::math::map(p, w(), m_length);
 }
 } // namespace geena::ui

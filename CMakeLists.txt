@@ -24,8 +24,6 @@ project(geena LANGUAGES CXX)
 
 list(APPEND SOURCES
 	src/main.cpp
-	src/utils/string.cpp
-	src/utils/fs.cpp
 	src/ui/mainWindow.cpp
 	src/ui/counter.cpp
 	src/ui/progress.cpp
@@ -35,6 +33,8 @@ list(APPEND SOURCES
 	src/engine/audioFile.cpp
 	src/engine/audioFileFactory.cpp
 	src/engine/state.cpp
+	src/deps/mcl-utils/src/fs.cpp
+	src/deps/mcl-utils/src/string.cpp
 	src/deps/audio-buffer/src/audioBuffer.cpp)
 list(APPEND PREPROCESSOR_DEFS 
 	__LINUX_ALSA__ 
