@@ -69,6 +69,7 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 , m_btn_unload(228, 216, 100, 100, "Unload")
 , m_counter(8, 8, w - 16, 100)
 , m_progress(8, 118, w - 16, 20)
+, m_pitchSlider(w - 28, 216, 20, 200)
 {
 	end();
 
@@ -89,6 +90,11 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 	m_progress.onClick = [](Frame f) {
 		engine::api::goToFrame(f);
 	};
+
+	m_pitchSlider.callback([](Fl_Widget* w, void* /*v*/) {
+		const float v = static_cast<PitchSlider*>(w)->value();
+		std::cout << mcl::utils::math::map(v, G_MIN_PITCH, G_MAX_PITCH) << "\n";
+	});
 
 	show();
 }

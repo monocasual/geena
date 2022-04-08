@@ -27,6 +27,7 @@ list(APPEND SOURCES
 	src/ui/mainWindow.cpp
 	src/ui/counter.cpp
 	src/ui/progress.cpp
+	src/ui/pitchSlider.cpp
 	src/engine/api.cpp
 	src/engine/rendering.cpp
 	src/engine/audioEngine.cpp

@@ -2,6 +2,7 @@
 
 #include "counter.hpp"
 #include "engine/state.hpp"
+#include "pitchSlider.hpp"
 #include "progress.hpp"
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Window.H>
@@ -19,10 +20,11 @@ public:
 	void refresh();
 
 private:
-	Fl_Button m_btn_playPause;
-	Fl_Button m_btn_rewind;
-	Fl_Button m_btn_unload;
-	Counter   m_counter;
-	Progress  m_progress;
+	Fl_Button   m_btn_playPause;
+	Fl_Button   m_btn_rewind;
+	Fl_Button   m_btn_unload;
+	Counter     m_counter;
+	Progress    m_progress;
+	PitchSlider m_pitchSlider;
 };
 } // namespace geena::ui

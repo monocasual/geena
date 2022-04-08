@@ -1,9 +1,8 @@
 #include "api.hpp"
 #include "audioFileFactory.hpp"
 #include "const.hpp"
-#include "src/deps/atomic-swapper/src/atomic-swapper.hpp"
+#include "deps/atomic-swapper/src/atomic-swapper.hpp"
 #include "state.hpp"
-#include "utils/log.hpp"
 #include <cassert>
 #include <functional>
 
@@ -87,11 +86,18 @@ void unloadAudioFile()
 
 /* -------------------------------------------------------------------------- */
 
-void setPitch(PitchDir dir)
+void setPitch(float v)
 {
-	g_layout.get().pitch += dir == PitchDir::UP ? G_PITCH_DELTA : -G_PITCH_DELTA;
+	g_layout.get().pitch = std::clamp(v, G_MIN_PITCH, G_MAX_PITCH);
 	g_layout.swap();
 }
+
+void setPitch(PitchDir dir)
+{
+	setPitch(g_layout.get().pitch + (dir == PitchDir::UP ? G_PITCH_DELTA : -G_PITCH_DELTA));
+}
+
+/* -------------------------------------------------------------------------- */
 
 void nudgePitch_begin(PitchDir dir)
 {
