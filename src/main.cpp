@@ -27,21 +27,22 @@ int main()
 
 	engine::kernel::Callback cb = [](AudioBuffer& out, Frame bufferSize) {
 		AtomicSwapper<engine::Layout>::RtLock lock(engine::g_layout);
-		const engine::Layout&                 layout = lock.get();
 
-		ReadStatus status   = layout.state->status.load();
-		Frame      position = layout.state->position.load();
+		const engine::Layout& layout_RT = lock.get();
 
-		if (status != ReadStatus::PLAY || layout.audioFile == nullptr)
+		ReadStatus status   = layout_RT.state->status.load();
+		Frame      position = layout_RT.state->position.load();
+
+		if (status != ReadStatus::PLAY || layout_RT.audioFile == nullptr)
 			return;
 
 		const Frame from = position;
 		const Frame to   = position + bufferSize;
-		const Frame max  = layout.audioFile->countFrames();
+		const Frame max  = layout_RT.audioFile->countFrames();
 
 		ML_DEBUG("Render [" << from << ", " << to << ") - " << max);
 
-		position = engine::renderer::render(*layout.audioFile, out, layout.pitch, from, bufferSize);
+		position = engine::renderer::render(*layout_RT.audioFile, out, layout_RT.pitch, from, bufferSize);
 
 		if (to > max)
 		{
@@ -49,8 +50,8 @@ int main()
 			position = 0;
 		}
 
-		layout.state->status.store(status);
-		layout.state->position.store(position);
+		layout_RT.state->status.store(status);
+		layout_RT.state->position.store(position);
 	};
 
 	engine::renderer::init();
