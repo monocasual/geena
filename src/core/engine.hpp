@@ -10,8 +10,9 @@ class Engine
 public:
 	Engine();
 
-	State                      state;
-	Data                       data;
 	mcl::AtomicSwapper<Layout> layout;
+
+private:
+	Shared m_shared;
 };
 } // namespace geena::core

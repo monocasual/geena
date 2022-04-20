@@ -7,21 +7,18 @@
 
 namespace geena::core
 {
-struct State
+struct Shared
 {
 	std::atomic<ReadStatus> status{ReadStatus::STOP};
 	std::atomic<Frame>      position{0};
+
+	AudioFile audioFile;
 };
 
 struct Layout
 {
-	float      pitch     = 1.0f;
-	AudioFile* audioFile = nullptr;
-	State*     state     = nullptr;
+	bool    enabled = true;
+	float   pitch   = 1.0f;
+	Shared* shared  = nullptr;
 };
-
-struct Data
-{
-	AudioFile audioFile;
-};
-} // namespace geena::engine
+} // namespace geena::core

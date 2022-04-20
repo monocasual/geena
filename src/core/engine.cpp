@@ -4,7 +4,7 @@ namespace geena::core
 {
 Engine::Engine()
 {
-	layout.get().state = &state;
+	layout.get().shared = &m_shared;
 	layout.swap();
 }
 } // namespace geena::core

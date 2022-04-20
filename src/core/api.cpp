@@ -27,28 +27,28 @@ float pitchOld_ = 0.0;
 
 void play()
 {
-	g_engine.state.status.store(ReadStatus::PLAY);
+	g_engine.layout.get().shared->status.store(ReadStatus::PLAY);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void pause()
 {
-	g_engine.state.status.store(ReadStatus::PAUSE);
+	g_engine.layout.get().shared->status.store(ReadStatus::PAUSE);
 }
 
 /* -------------------------------------------------------------------------- */
 
 void playPauseToggle()
 {
-	g_engine.state.status.load() == ReadStatus::PLAY ? pause() : play();
+	g_engine.layout.get().shared->status.load() == ReadStatus::PLAY ? pause() : play();
 }
 
 /* -------------------------------------------------------------------------- */
 
 void rewind()
 {
-	g_engine.state.position.store(0);
+	g_engine.layout.get().shared->position.store(0);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -59,12 +59,12 @@ bool loadAudioFile(std::string path)
 	if (!res)
 		return false;
 
-	/* Layout first, then data. */
-	g_engine.layout.get().audioFile = nullptr;
+	/* Disable layout first, then alter data. */
+	g_engine.layout.get().enabled = false;
 	g_engine.layout.swap();
 
-	g_engine.data.audioFile         = std::move(res.value());
-	g_engine.layout.get().audioFile = &g_engine.data.audioFile;
+	g_engine.layout.get().shared->audioFile = std::move(res.value());
+	g_engine.layout.get().enabled           = true;
 	g_engine.layout.swap();
 
 	play();
@@ -74,11 +74,13 @@ bool loadAudioFile(std::string path)
 
 void unloadAudioFile()
 {
-	/* Layout first, then data. */
-	g_engine.layout.get().audioFile = nullptr;
+	/* Disable layout first, then alter data. */
+	g_engine.layout.get().enabled = false;
 	g_engine.layout.swap();
 
-	g_engine.data.audioFile = {};
+	g_engine.layout.get().shared->audioFile = {};
+	g_engine.layout.get().enabled           = true;
+	g_engine.layout.swap();
 
 	rewind();
 }
@@ -120,19 +122,19 @@ void nudgePitch_end()
 
 void goToFrame(Frame f)
 {
-	g_engine.state.position.store(f);
+	g_engine.layout.get().shared->position.store(f);
 }
 
 /* -------------------------------------------------------------------------- */
 
 Frame getCurrentPosition()
 {
-	return g_engine.state.position.load();
+	return g_engine.layout.get().shared->position.load();
 }
 
 Frame getAudioFileLength()
 {
-	const AudioFile& f = g_engine.data.audioFile;
+	const AudioFile& f = g_engine.layout.get().shared->audioFile;
 	return f.isValid() ? f.countFrames() : 0;
 }
 
