@@ -4,7 +4,7 @@
 #include <optional>
 #include <string>
 
-namespace geena::engine
+namespace geena::core
 {
 std::optional<AudioFile> makeAudioFile(std::string path, int sampleRate);
 } // namespace geena::engine

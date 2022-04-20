@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 
-namespace geena::engine
+namespace geena::core
 {
 class AudioFile
 {

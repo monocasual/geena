@@ -28,12 +28,13 @@ list(APPEND SOURCES
 	src/ui/counter.cpp
 	src/ui/progress.cpp
 	src/ui/pitchSlider.cpp
-	src/engine/api.cpp
-	src/engine/rendering.cpp
-	src/engine/audioEngine.cpp
-	src/engine/audioFile.cpp
-	src/engine/audioFileFactory.cpp
-	src/engine/state.cpp
+	src/core/engine.cpp
+	src/core/api.cpp
+	src/core/rendering.cpp
+	src/core/kernel.cpp
+	src/core/audioFile.cpp
+	src/core/audioFileFactory.cpp
+	src/core/state.cpp
 	src/deps/mcl-utils/src/fs.cpp
 	src/deps/mcl-utils/src/string.cpp
 	src/deps/audio-buffer/src/audioBuffer.cpp)

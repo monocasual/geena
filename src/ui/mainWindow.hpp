@@ -1,7 +1,7 @@
 #pragma once
 
 #include "counter.hpp"
-#include "engine/state.hpp"
+#include "core/state.hpp"
 #include "pitchSlider.hpp"
 #include "progress.hpp"
 #include <FL/Fl_Button.H>

@@ -3,7 +3,7 @@
 #include "types.hpp"
 #include <string>
 
-namespace geena::engine::api
+namespace geena::core::api
 {
 void play();
 void stop();

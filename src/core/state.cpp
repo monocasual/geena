@@ -1,6 +1,6 @@
 #include "state.hpp"
 #include <cassert>
 
-namespace geena::engine
+namespace geena::core
 {
 } // namespace geena::engine

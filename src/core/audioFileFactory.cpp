@@ -6,7 +6,7 @@
 
 using namespace mcl;
 
-namespace geena::engine
+namespace geena::core
 {
 namespace
 {

@@ -1,34 +1,33 @@
+#include "core/audioFile.hpp"
+#include "core/audioFileFactory.hpp"
+#include "core/engine.hpp"
+#include "core/kernel.hpp"
+#include "core/rendering.hpp"
+#include "core/state.hpp"
 #include "deps/atomic-swapper/src/atomic-swapper.hpp"
 #include "deps/mcl-utils/src/log.hpp"
-#include "engine/audioEngine.hpp"
-#include "engine/audioFile.hpp"
-#include "engine/audioFileFactory.hpp"
-#include "engine/rendering.hpp"
-#include "engine/state.hpp"
 #include "types.hpp"
 #include "ui/mainWindow.hpp"
 #include <iostream>
 
 using namespace mcl;
 
-namespace geena::engine
+namespace geena::core
 {
-State                 g_state;
-Data                  g_data;
-AtomicSwapper<Layout> g_layout;
-} // namespace geena::engine
+Engine g_engine;
+} // namespace geena::core
 
 int main()
 {
 	using namespace geena;
 
-	engine::g_layout.get().state = &engine::g_state;
-	engine::g_layout.swap();
+	core::Renderer renderer;
+	core::Kernel   kernel;
 
-	engine::kernel::Callback cb = [](AudioBuffer& out, Frame bufferSize) {
-		AtomicSwapper<engine::Layout>::RtLock lock(engine::g_layout);
+	core::Kernel::Callback cb = [&renderer](AudioBuffer& out, Frame bufferSize) {
+		AtomicSwapper<core::Layout>::RtLock lock(core::g_engine.layout);
 
-		const engine::Layout& layout_RT = lock.get();
+		const core::Layout& layout_RT = lock.get();
 
 		ReadStatus status   = layout_RT.state->status.load();
 		Frame      position = layout_RT.state->position.load();
@@ -42,7 +41,7 @@ int main()
 
 		ML_DEBUG("Render [" << from << ", " << to << ") - " << max);
 
-		position = engine::renderer::render(*layout_RT.audioFile, out, layout_RT.pitch, from, bufferSize);
+		position = renderer.render(*layout_RT.audioFile, out, layout_RT.pitch, from, bufferSize);
 
 		if (to > max)
 		{
@@ -54,13 +53,13 @@ int main()
 		layout_RT.state->position.store(position);
 	};
 
-	engine::renderer::init();
-	engine::kernel::init({0, 2, 44100, 4096}, cb);
+	kernel.init({0, 2, 44100, 4096}, cb);
+	renderer.init();
 
 	ui::MainWindow w(0, 0, 640, 480);
 	int            res = w.run();
 
-	engine::kernel::close();
+	kernel.close();
 
 	return res;
 }

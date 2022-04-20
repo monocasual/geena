@@ -1,11 +1,11 @@
 #include "mainWindow.hpp"
 
 #include "const.hpp"
+#include "core/api.hpp"
 #include "deps/mcl-utils/src/fs.hpp"
 #include "deps/mcl-utils/src/log.hpp"
 #include "deps/mcl-utils/src/math.hpp"
 #include "deps/mcl-utils/src/string.hpp"
-#include "engine/api.hpp"
 #include "types.hpp"
 #include <FL/Fl.H>
 #include <filesystem>
@@ -31,13 +31,13 @@ void refresh_(void* w)
 void onKeyDown_(int key)
 {
 	if (key == FL_Up)
-		engine::api::setPitch(PitchDir::UP);
+		core::api::setPitch(PitchDir::UP);
 	else if (key == FL_Down)
-		engine::api::setPitch(PitchDir::DOWN);
+		core::api::setPitch(PitchDir::DOWN);
 	else if (key == FL_Left)
-		engine::api::nudgePitch_begin(PitchDir::DOWN);
+		core::api::nudgePitch_begin(PitchDir::DOWN);
 	else if (key == FL_Right)
-		engine::api::nudgePitch_begin(PitchDir::UP);
+		core::api::nudgePitch_begin(PitchDir::UP);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -45,7 +45,7 @@ void onKeyDown_(int key)
 void onKeyUp_(int key)
 {
 	if (key == FL_Left || key == FL_Right)
-		engine::api::nudgePitch_end();
+		core::api::nudgePitch_end();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -54,7 +54,7 @@ void onFileDrop_(const char* s)
 {
 	std::vector<std::string> paths = mcl::utils::string::split(s, "\n");
 	std::string              path  = mcl::utils::fs::uriToPath(paths[0]);
-	engine::api::loadAudioFile(path);
+	core::api::loadAudioFile(path);
 }
 } // namespace
 
@@ -76,19 +76,19 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 	Fl::add_timeout(G_UI_REFRESH_RATE, refresh_, static_cast<void*>(this));
 
 	m_btn_playPause.callback([](Fl_Widget* /*w*/, void* /*v*/) {
-		engine::api::playPauseToggle();
+		core::api::playPauseToggle();
 	});
 
 	m_btn_rewind.callback([](Fl_Widget* /*w*/, void* /*v*/) {
-		engine::api::rewind();
+		core::api::rewind();
 	});
 
 	m_btn_unload.callback([](Fl_Widget* /*w*/, void* /*v*/) {
-		engine::api::unloadAudioFile();
+		core::api::unloadAudioFile();
 	});
 
 	m_progress.onClick = [](Frame f) {
-		engine::api::goToFrame(f);
+		core::api::goToFrame(f);
 	};
 
 	m_pitchSlider.callback([](Fl_Widget* w, void* /*v*/) {
@@ -146,8 +146,8 @@ int MainWindow::handle(int event)
 
 void MainWindow::refresh()
 {
-	Frame position = engine::api::getCurrentPosition();
-	Frame length   = engine::api::getAudioFileLength();
+	Frame position = core::api::getCurrentPosition();
+	Frame length   = core::api::getAudioFileLength();
 	m_counter.refresh(position, length);
 	m_progress.refresh(position, length);
 }

@@ -5,7 +5,7 @@
 #include <atomic>
 #include <memory>
 
-namespace geena::engine
+namespace geena::core
 {
 struct State
 {
