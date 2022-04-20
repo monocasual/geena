@@ -95,14 +95,8 @@ list(APPEND LIBRARIES RtAudio::rtaudio)
 find_package(FLTK CONFIG REQUIRED)
 list(APPEND LIBRARIES fltk fltk_gl fltk_forms fltk_images)
 
-# TODO - vcpkg currently doesn't provide CMake targets for libsamplerate: 
-# let's include it the manual way. 
-
-find_library(LIBRARY_SAMPLERATE 
-	NAMES samplerate libsamplerate libsamplerate-0 liblibsamplerate-0
-	PATH ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET})
-list(APPEND LIBRARIES ${LIBRARY_SAMPLERATE})
-
+find_package(SampleRate CONFIG REQUIRED)
+list(APPEND LIBRARIES SampleRate::samplerate)
 
 # ------------------------------------------------------------------------------
 # Finalize 'geena' target (main executable).
