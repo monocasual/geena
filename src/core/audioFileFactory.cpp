@@ -73,6 +73,6 @@ std::optional<AudioFile> makeAudioFile(std::string path, int sampleRate)
 		}
 
 	ML_DEBUG("AudioFile ready");
-	return {AudioFile(std::move(buffer))};
+	return {AudioFile(std::move(buffer), path)};
 }
-} // namespace geena::engine
+} // namespace geena::core

@@ -7,12 +7,21 @@
 #include <FL/fl_draw.H>
 #include <string>
 
+using namespace mcl;
+
 namespace geena::ui
 {
 Counter::Counter(int x, int y, int w, int h, core::CurrentState& state)
-: Fl_Widget(x, y, w, h)
+: Fl_Flex(x, y, w, h, Fl_Flex::Direction::VERTICAL, 20)
 , m_state(state)
 {
+	m_title = new Fl_Box(0, 0, 0, 0, "Title");
+	m_time  = new Fl_Box(0, 0, 0, 0, "Time");
+	m_pitch = new Fl_Box(0, 0, 0, 0, "Pitch");
+	add(m_title);
+	add(m_time);
+	add(m_pitch);
+	end();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -21,16 +30,20 @@ void Counter::draw()
 {
 	float percent = m_state.audioFileLength > 0 ? (m_state.position / (float)m_state.audioFileLength) * 100 : 0;
 
-	std::string s = std::to_string(m_state.position) +
-	                " / " + std::to_string(m_state.audioFileLength) +
-	                " - " + std::to_string(percent) + " %" +
-	                " --- pitch: " + std::to_string(m_state.pitch);
+	std::string title = m_state.audioFilePath;
+	std::string time  = std::to_string(m_state.position) +
+	                   " / " + std::to_string(m_state.audioFileLength) +
+	                   " - " + std::to_string(percent) + " %";
+	std::string pitch = "Pitch: " + std::to_string(m_state.pitch);
+
+	m_title->copy_label(title.c_str());
+	m_time->copy_label(time.c_str());
+	m_pitch->copy_label(pitch.c_str());
 
 	fl_rectf(x(), y(), w(), h(), fl_rgb_color(255, 255, 255));
 	fl_rect(x(), y(), w(), h(), fl_rgb_color(0, 0, 0));
 
-	fl_color(fl_rgb_color(0, 0, 0));
-	fl_draw(s.c_str(), x(), y(), w(), h(), FL_ALIGN_CENTER);
+	draw_children();
 }
 
 /* -------------------------------------------------------------------------- */

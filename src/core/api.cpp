@@ -133,6 +133,7 @@ CurrentState getCurrentState()
 	CurrentState state;
 	state.position        = layout.shared->position.load();
 	state.audioFileLength = audioFile.isValid() ? audioFile.countFrames() : 0;
+	state.audioFilePath   = audioFile.isValid() ? audioFile.getPath() : "";
 	state.pitch           = layout.pitch;
 
 	return state;

@@ -11,8 +11,9 @@ AudioFile::AudioFile()
 
 /* -------------------------------------------------------------------------- */
 
-AudioFile::AudioFile(AudioBuffer&& data)
+AudioFile::AudioFile(AudioBuffer&& data, const std::string& path)
 : m_data(std::move(data))
+, m_path(path)
 {
 }
 
@@ -27,6 +28,10 @@ Frame AudioFile::countFrames() const { return m_data.countFrames(); }
 /* -------------------------------------------------------------------------- */
 
 const AudioBuffer& AudioFile::getBuffer() const { return m_data; }
+
+/* -------------------------------------------------------------------------- */
+
+std::string AudioFile::getPath() const { return m_path; }
 
 /* -------------------------------------------------------------------------- */
 

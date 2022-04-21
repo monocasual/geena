@@ -28,8 +28,9 @@ passing. */
 
 struct CurrentState
 {
-	Frame position;
-	Frame audioFileLength;
-	float pitch;
+	Frame       position;
+	Frame       audioFileLength;
+	std::string audioFilePath;
+	float       pitch;
 };
 } // namespace geena::core
