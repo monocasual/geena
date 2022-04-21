@@ -67,8 +67,6 @@ bool loadAudioFile(std::string path)
 	g_engine.layout.get().enabled           = true;
 	g_engine.layout.swap();
 
-	play();
-
 	return true;
 }
 
