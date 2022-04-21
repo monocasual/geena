@@ -1,15 +1,22 @@
 #include "mainWindow.hpp"
-
 #include "const.hpp"
 #include "core/api.hpp"
+#include "core/state.hpp"
+#include "deps/mcl-fl_flex/src/fl_flex.hpp"
 #include "deps/mcl-utils/src/fs.hpp"
 #include "deps/mcl-utils/src/log.hpp"
 #include "deps/mcl-utils/src/math.hpp"
 #include "deps/mcl-utils/src/string.hpp"
 #include "types.hpp"
+#include "ui/counter.hpp"
+#include "ui/pitchSlider.hpp"
+#include "ui/progress.hpp"
 #include <FL/Fl.H>
+#include <FL/Fl_Box.H>
 #include <filesystem>
 #include <iostream>
+
+using namespace mcl;
 
 namespace geena::ui
 {
@@ -64,34 +71,56 @@ void onFileDrop_(const char* s)
 
 MainWindow::MainWindow(int x, int y, int w, int h)
 : Fl_Window(x, y, w, h)
-, m_btn_playPause(8, 216, 100, 100, "Play/Pause")
-, m_btn_rewind(118, 216, 100, 100, "Rewind")
-, m_btn_unload(228, 216, 100, 100, "Unload")
-, m_counter(8, 8, w - 16, 100)
-, m_progress(8, 118, w - 16, 20)
-, m_pitchSlider(w - 28, 216, 20, 200)
 {
 	end();
 
+	Fl_Flex* container = new Fl_Flex(geompp::Rect(0, 0, w, h).reduced({30}), Fl_Flex::Direction::VERTICAL, 30);
+	{
+		m_counter  = new Counter(0, 0, 0, 0);
+		m_progress = new Progress(0, 0, 0, 0);
+
+		Fl_Flex* buttons = new Fl_Flex(Fl_Flex::Direction::HORIZONTAL, 20);
+		{
+			m_btn_playPause = new Fl_Button(0, 0, 0, 0, "Play/Pause");
+			m_btn_rewind    = new Fl_Button(0, 0, 0, 0, "Rewind");
+			m_btn_unload    = new Fl_Button(0, 0, 0, 0, "Unload");
+			m_pitchSlider   = new PitchSlider(0, 0, 0, 0);
+			buttons->add(m_btn_playPause, 100);
+			buttons->add(m_btn_rewind, 100);
+			buttons->add(m_btn_unload, 100);
+			buttons->add(new Fl_Box(0, 0, 0, 0));
+			buttons->add(m_pitchSlider, 20);
+			buttons->end();
+		}
+
+		container->add(m_counter);
+		container->add(m_progress, 20);
+		container->add(buttons, 200);
+		container->end();
+	}
+
+	add(container);
+	resizable(container);
+
 	Fl::add_timeout(G_UI_REFRESH_RATE, refresh_, static_cast<void*>(this));
 
-	m_btn_playPause.callback([](Fl_Widget* /*w*/, void* /*v*/) {
+	m_btn_playPause->callback([](Fl_Widget* /*w*/, void* /*v*/) {
 		core::api::playPauseToggle();
 	});
 
-	m_btn_rewind.callback([](Fl_Widget* /*w*/, void* /*v*/) {
+	m_btn_rewind->callback([](Fl_Widget* /*w*/, void* /*v*/) {
 		core::api::rewind();
 	});
 
-	m_btn_unload.callback([](Fl_Widget* /*w*/, void* /*v*/) {
+	m_btn_unload->callback([](Fl_Widget* /*w*/, void* /*v*/) {
 		core::api::unloadAudioFile();
 	});
 
-	m_progress.onClick = [](Frame f) {
+	m_progress->onClick = [](Frame f) {
 		core::api::goToFrame(f);
 	};
 
-	m_pitchSlider.callback([](Fl_Widget* w, void* /*v*/) {
+	m_pitchSlider->callback([](Fl_Widget* w, void* /*v*/) {
 		const float v = static_cast<PitchSlider*>(w)->value();
 		core::api::setPitch(mcl::utils::math::map(v, G_MIN_PITCH, G_MAX_PITCH));
 	});
@@ -148,8 +177,8 @@ void MainWindow::refresh()
 {
 	Frame position = core::api::getCurrentPosition();
 	Frame length   = core::api::getAudioFileLength();
-	m_counter.refresh(position, length);
-	m_progress.refresh(position, length);
+	m_counter->refresh(position, length);
+	m_progress->refresh(position, length);
 }
 
 /* -------------------------------------------------------------------------- */

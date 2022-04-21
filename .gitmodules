@@ -19,3 +19,9 @@
 [submodule "src/deps/mcl-resampler"]
 	path = src/deps/mcl-resampler
 	url = git@github.com:monocasual/mcl-resampler.git
+[submodule "src/deps/mcl-fl_flex"]
+	path = src/deps/mcl-fl_flex
+	url = git@github.com:monocasual/mcl-fl_flex.git
+[submodule "src/deps/geompp"]
+	path = src/deps/geompp
+	url = git@github.com:monocasual/geompp.git

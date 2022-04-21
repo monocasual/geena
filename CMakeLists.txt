@@ -38,6 +38,7 @@ list(APPEND SOURCES
 	src/deps/mcl-utils/src/fs.cpp
 	src/deps/mcl-utils/src/string.cpp
 	src/deps/mcl-resampler/src/resampler.cpp
+	src/deps/mcl-fl_flex/src/fl_flex.cpp
 	src/deps/audio-buffer/src/audioBuffer.cpp)
 list(APPEND PREPROCESSOR_DEFS 
 	__LINUX_ALSA__ 
@@ -45,7 +46,8 @@ list(APPEND PREPROCESSOR_DEFS
 	__UNIX_JACK__) # TODO customize
 list(APPEND INCLUDE_DIRS
 	${CMAKE_SOURCE_DIR}
-	${CMAKE_SOURCE_DIR}/src)
+	${CMAKE_SOURCE_DIR}/src
+	${CMAKE_SOURCE_DIR}/src/deps)
 list(APPEND COMPILER_OPTIONS)
 list(APPEND LIBRARIES stdc++fs)
 list(APPEND COMPILER_FEATURES cxx_std_17)

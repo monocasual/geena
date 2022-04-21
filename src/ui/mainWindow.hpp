@@ -1,14 +1,13 @@
 #pragma once
 
-#include "counter.hpp"
-#include "core/state.hpp"
-#include "pitchSlider.hpp"
-#include "progress.hpp"
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Window.H>
 
 namespace geena::ui
 {
+class Counter;
+class Progress;
+class PitchSlider;
 class MainWindow : public Fl_Window
 {
 public:
@@ -20,11 +19,11 @@ public:
 	void refresh();
 
 private:
-	Fl_Button   m_btn_playPause;
-	Fl_Button   m_btn_rewind;
-	Fl_Button   m_btn_unload;
-	Counter     m_counter;
-	Progress    m_progress;
-	PitchSlider m_pitchSlider;
+	Fl_Button*   m_btn_playPause;
+	Fl_Button*   m_btn_rewind;
+	Fl_Button*   m_btn_unload;
+	Counter*     m_counter;
+	Progress*    m_progress;
+	PitchSlider* m_pitchSlider;
 };
 } // namespace geena::ui
