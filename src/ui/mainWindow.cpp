@@ -4,7 +4,6 @@
 #include "core/state.hpp"
 #include "deps/mcl-fl_flex/src/fl_flex.hpp"
 #include "deps/mcl-utils/src/log.hpp"
-#include "deps/mcl-utils/src/math.hpp"
 #include "types.hpp"
 #include "ui/counter.hpp"
 #include "ui/pitchSlider.hpp"

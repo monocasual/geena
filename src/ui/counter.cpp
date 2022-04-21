@@ -2,6 +2,7 @@
 #include "core/api.hpp"
 #include "core/state.hpp"
 #include "deps/mcl-utils/src/fs.hpp"
+#include "deps/mcl-utils/src/math.hpp"
 #include "deps/mcl-utils/src/string.hpp"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
@@ -28,13 +29,15 @@ Counter::Counter(int x, int y, int w, int h, core::CurrentState& state)
 
 void Counter::draw()
 {
-	float percent = m_state.audioFileLength > 0 ? (m_state.position / (float)m_state.audioFileLength) * 100 : 0;
+	float percentTime  = m_state.audioFileLength > 0 ? (m_state.position / (float)m_state.audioFileLength) * 100 : 0;
+	float percentPitch = utils::math::map(m_state.pitch, 1.0f, 2.0f, 0.0, 100.0);
 
 	std::string title = m_state.audioFilePath;
 	std::string time  = std::to_string(m_state.position) +
 	                   " / " + std::to_string(m_state.audioFileLength) +
-	                   " - " + std::to_string(percent) + " %";
-	std::string pitch = "Pitch: " + std::to_string(m_state.pitch);
+	                   " - " + std::to_string(percentTime) + " %";
+	std::string pitch = "Pitch: " + std::to_string(m_state.pitch) +
+	                    " | " + std::to_string(percentPitch) + " %";
 
 	m_title->copy_label(title.c_str());
 	m_time->copy_label(time.c_str());
