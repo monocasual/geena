@@ -91,9 +91,11 @@ void setPitch(float v)
 	g_engine.layout.swap();
 }
 
-void setPitch(PitchDir dir)
+float setPitch(PitchDir dir)
 {
-	setPitch(g_engine.layout.get().pitch + (dir == PitchDir::UP ? G_PITCH_DELTA : -G_PITCH_DELTA));
+	float v = g_engine.layout.get().pitch + (dir == PitchDir::UP ? G_PITCH_DELTA : -G_PITCH_DELTA);
+	setPitch(v);
+	return v;
 }
 
 /* -------------------------------------------------------------------------- */

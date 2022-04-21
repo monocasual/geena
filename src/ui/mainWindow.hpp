@@ -20,7 +20,11 @@ public:
 	void refresh();
 
 private:
+	void onKeyDown(int key);
+	void onKeyUp(int key);
+
 	core::CurrentState m_state;
+	bool               m_keyPressed;
 
 	Fl_Button*   m_btn_playPause;
 	Fl_Button*   m_btn_rewind;

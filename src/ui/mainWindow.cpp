@@ -20,37 +20,11 @@ namespace geena::ui
 {
 namespace
 {
-bool keyPressed_ = false;
-
-/* -------------------------------------------------------------------------- */
-
 void refresh_(void* w)
 {
 	MainWindow* window = static_cast<MainWindow*>(w);
 	window->refresh();
 	Fl::repeat_timeout(G_UI_REFRESH_RATE, refresh_, static_cast<void*>(window));
-}
-
-/* -------------------------------------------------------------------------- */
-
-void onKeyDown_(int key)
-{
-	if (key == FL_Up)
-		core::api::setPitch(PitchDir::UP);
-	else if (key == FL_Down)
-		core::api::setPitch(PitchDir::DOWN);
-	else if (key == FL_Left)
-		core::api::nudgePitch_begin(PitchDir::DOWN);
-	else if (key == FL_Right)
-		core::api::nudgePitch_begin(PitchDir::UP);
-}
-
-/* -------------------------------------------------------------------------- */
-
-void onKeyUp_(int key)
-{
-	if (key == FL_Left || key == FL_Right)
-		core::api::nudgePitch_end();
 }
 } // namespace
 
@@ -61,6 +35,7 @@ void onKeyUp_(int key)
 MainWindow::MainWindow(int x, int y, int w, int h)
 : Fl_Window(x, y, w, h)
 , m_state(core::api::getCurrentState())
+, m_keyPressed(false)
 {
 	end();
 
@@ -130,16 +105,16 @@ int MainWindow::handle(int event)
 	}
 	case FL_KEYDOWN:
 	{
-		if (keyPressed_)
+		if (m_keyPressed)
 			break;
-		onKeyDown_(Fl::event_key());
-		keyPressed_ = true;
+		onKeyDown(Fl::event_key());
+		m_keyPressed = true;
 		return 1;
 	}
 	case FL_KEYUP:
 	{
-		onKeyUp_(Fl::event_key());
-		keyPressed_ = false;
+		onKeyUp(Fl::event_key());
+		m_keyPressed = false;
 		return 1;
 	}
 	default:
@@ -164,5 +139,27 @@ void MainWindow::refresh()
 int MainWindow::run()
 {
 	return Fl::run();
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MainWindow::onKeyDown(int key)
+{
+	if (key == FL_Up)
+		m_pitchSlider->value(core::api::setPitch(PitchDir::UP));
+	else if (key == FL_Down)
+		m_pitchSlider->value(core::api::setPitch(PitchDir::DOWN));
+	else if (key == FL_Left)
+		core::api::nudgePitch_begin(PitchDir::DOWN);
+	else if (key == FL_Right)
+		core::api::nudgePitch_begin(PitchDir::UP);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void MainWindow::onKeyUp(int key)
+{
+	if (key == FL_Left || key == FL_Right)
+		core::api::nudgePitch_end();
 }
 } // namespace geena::ui
