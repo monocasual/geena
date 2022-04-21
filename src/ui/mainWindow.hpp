@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/state.hpp"
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Window.H>
 
@@ -19,6 +20,8 @@ public:
 	void refresh();
 
 private:
+	core::CurrentState m_state;
+
 	Fl_Button*   m_btn_playPause;
 	Fl_Button*   m_btn_rewind;
 	Fl_Button*   m_btn_unload;

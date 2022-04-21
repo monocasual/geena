@@ -71,13 +71,14 @@ void onFileDrop_(const char* s)
 
 MainWindow::MainWindow(int x, int y, int w, int h)
 : Fl_Window(x, y, w, h)
+, m_state(core::api::getCurrentState())
 {
 	end();
 
 	Fl_Flex* container = new Fl_Flex(geompp::Rect(0, 0, w, h).reduced({30}), Fl_Flex::Direction::VERTICAL, 30);
 	{
-		m_counter  = new Counter(0, 0, 0, 0);
-		m_progress = new Progress(0, 0, 0, 0);
+		m_counter  = new Counter(0, 0, 0, 0, m_state);
+		m_progress = new Progress(0, 0, 0, 0, m_state);
 
 		Fl_Flex* buttons = new Fl_Flex(Fl_Flex::Direction::HORIZONTAL, 20);
 		{
@@ -175,10 +176,10 @@ int MainWindow::handle(int event)
 
 void MainWindow::refresh()
 {
-	Frame position = core::api::getCurrentPosition();
-	Frame length   = core::api::getAudioFileLength();
-	m_counter->refresh(position, length);
-	m_progress->refresh(position, length);
+	m_state = core::api::getCurrentState();
+
+	m_counter->refresh(m_state);
+	m_progress->refresh(m_state);
 }
 
 /* -------------------------------------------------------------------------- */

@@ -127,15 +127,16 @@ void goToFrame(Frame f)
 
 /* -------------------------------------------------------------------------- */
 
-Frame getCurrentPosition()
+CurrentState getCurrentState()
 {
-	return g_engine.layout.get().shared->position.load();
-}
+	const Layout&    layout    = g_engine.layout.get();
+	const AudioFile& audioFile = layout.shared->audioFile;
 
-Frame getAudioFileLength()
-{
-	const AudioFile& f = g_engine.layout.get().shared->audioFile;
-	return f.isValid() ? f.countFrames() : 0;
-}
+	CurrentState state;
+	state.position        = layout.shared->position.load();
+	state.audioFileLength = audioFile.isValid() ? audioFile.countFrames() : 0;
+	state.pitch           = layout.pitch;
 
+	return state;
+}
 } // namespace geena::core::api

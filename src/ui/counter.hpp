@@ -3,19 +3,23 @@
 #include "types.hpp"
 #include <FL/Fl_Widget.H>
 
+namespace geena::core
+{
+struct CurrentState;
+}
+
 namespace geena::ui
 {
 class Counter : public Fl_Widget
 {
 public:
-	Counter(int x, int y, int w, int h);
+	Counter(int x, int y, int w, int h, core::CurrentState&);
 
 	void draw() override;
 
-	void refresh(Frame position, Frame length);
+	void refresh(core::CurrentState&);
 
 private:
-	Frame m_position;
-	Frame m_length;
+	core::CurrentState& m_state;
 };
 } // namespace geena::ui

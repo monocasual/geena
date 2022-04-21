@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/state.hpp"
 #include "types.hpp"
 #include <string>
 
@@ -17,6 +18,5 @@ void nudgePitch_begin(PitchDir dir);
 void nudgePitch_end();
 void goToFrame(Frame f);
 
-Frame getCurrentPosition();
-Frame getAudioFileLength();
-} // namespace geena::engine::api
+CurrentState getCurrentState();
+} // namespace geena::core::api

@@ -1,14 +1,14 @@
-#include "progress.hpp"
+#include "ui/progress.hpp"
+#include "core/state.hpp"
 #include "deps/mcl-utils/src/math.hpp"
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
 namespace geena::ui
 {
-Progress::Progress(int x, int y, int w, int h)
+Progress::Progress(int x, int y, int w, int h, core::CurrentState& state)
 : Fl_Widget(x, y, w, h)
-, m_position(0)
-, m_length(0)
+, m_state(state)
 {
 }
 
@@ -18,7 +18,7 @@ void Progress::draw()
 {
 	fl_rectf(x(), y(), w(), h(), fl_rgb_color(255, 255, 255));
 	fl_rect(x(), y(), w(), h(), fl_rgb_color(0, 0, 0));
-	fl_rectf(x(), y(), frameToPixel(m_position), h(), fl_rgb_color(0, 0, 0));
+	fl_rectf(x(), y(), frameToPixel(m_state.position), h(), fl_rgb_color(0, 0, 0));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -40,11 +40,9 @@ int Progress::handle(int event)
 
 /* -------------------------------------------------------------------------- */
 
-void Progress::refresh(Frame position, Frame length)
+void Progress::refresh(core::CurrentState& state)
 {
-	m_position = position;
-	m_length   = length;
-
+	m_state = state;
 	redraw();
 }
 
@@ -52,11 +50,11 @@ void Progress::refresh(Frame position, Frame length)
 
 int Progress::frameToPixel(Frame f)
 {
-	return mcl::utils::math::map(f, m_length, w());
+	return mcl::utils::math::map(f, m_state.audioFileLength, w());
 }
 
 Frame Progress::pixelToFrame(int p)
 {
-	return mcl::utils::math::map(p, w(), m_length);
+	return mcl::utils::math::map(p, w(), m_state.audioFileLength);
 }
 } // namespace geena::ui
