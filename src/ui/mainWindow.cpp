@@ -93,7 +93,7 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 
 	m_pitchSlider.callback([](Fl_Widget* w, void* /*v*/) {
 		const float v = static_cast<PitchSlider*>(w)->value();
-		std::cout << mcl::utils::math::map(v, G_MIN_PITCH, G_MAX_PITCH) << "\n";
+		core::api::setPitch(mcl::utils::math::map(v, G_MIN_PITCH, G_MAX_PITCH));
 	});
 
 	show();

@@ -30,9 +30,10 @@ const AudioBuffer& AudioFile::getBuffer() const { return m_data; }
 
 /* -------------------------------------------------------------------------- */
 
-void AudioFile::render(AudioBuffer& b, Frame start, Frame count, Frame offset) const
+Frame AudioFile::render(AudioBuffer& b, Frame start) const
 {
-	// TODO b.copyData(m_data[start], count, /*CHANNEL TODO*/2, offset);
-	b.set(m_data, count, start);
+	const Frame amount = std::min(b.countFrames(), m_data.countFrames() - start);
+	b.set(m_data, amount, start);
+	return amount;
 }
-} // namespace geena::engine
+} // namespace geena::core

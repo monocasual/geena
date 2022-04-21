@@ -16,3 +16,6 @@
 [submodule "src/deps/mcl-utils"]
 	path = src/deps/mcl-utils
 	url = git@github.com:monocasual/mcl-utils.git
+[submodule "src/deps/mcl-resampler"]
+	path = src/deps/mcl-resampler
+	url = git@github.com:monocasual/mcl-resampler.git

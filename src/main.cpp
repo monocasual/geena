@@ -24,7 +24,7 @@ int main()
 	core::Renderer renderer;
 	core::Kernel   kernel;
 
-	core::Kernel::Callback cb = [&renderer](AudioBuffer& out, Frame bufferSize) {
+	core::Kernel::Callback cb = [&renderer](AudioBuffer& out) {
 		AtomicSwapper<core::Layout>::RtLock lock(core::g_engine.layout);
 
 		const core::Layout& layout_RT = lock.get();
@@ -32,21 +32,21 @@ int main()
 		if (!layout_RT.enabled)
 			return;
 
+		//printf("%f\n", layout_RT.pitch);
+
 		ReadStatus status   = layout_RT.shared->status.load();
 		Frame      position = layout_RT.shared->position.load();
 
 		if (status != ReadStatus::PLAY || !layout_RT.shared->audioFile.isValid())
 			return;
 
-		const Frame from = position;
-		const Frame to   = position + bufferSize;
-		const Frame max  = layout_RT.shared->audioFile.countFrames();
+		const Frame max = layout_RT.shared->audioFile.countFrames();
 
-		ML_DEBUG("Render [" << from << ", " << to << ") - " << max);
+		//ML_DEBUG("Render [" << position << ", " << to << ") - " << max);
 
-		position = renderer.render(layout_RT.shared->audioFile, out, layout_RT.pitch, from, bufferSize);
+		position = renderer.render(layout_RT.shared->audioFile, out, layout_RT.pitch, position);
 
-		if (to > max)
+		if (position >= max)
 		{
 			status   = ReadStatus::STOP;
 			position = 0;
@@ -57,7 +57,6 @@ int main()
 	};
 
 	kernel.init({0, 2, 44100, 4096}, cb);
-	renderer.init();
 
 	ui::MainWindow w(0, 0, 640, 480);
 	int            res = w.run();

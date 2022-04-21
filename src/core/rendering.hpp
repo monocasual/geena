@@ -2,20 +2,25 @@
 
 #include "audioFile.hpp"
 #include "deps/audio-buffer/src/audioBuffer.hpp"
+#include "deps/mcl-resampler/src/resampler.hpp"
 #include "types.hpp"
-#include <samplerate.h>
 
 namespace geena::core
 {
 class Renderer
 {
 public:
-	void  init();
-	Frame render(const AudioFile& f, mcl::AudioBuffer& out, float pitch, Frame position, Frame bufferSize);
+	Renderer();
+
+	/* render
+	Renders a portion of AudioFile to the AudioBuffer, starting from frame 
+	'position'. */
+
+	Frame render(const AudioFile&, mcl::AudioBuffer&, float pitch, Frame position);
 
 private:
 	Frame renderResampled(const mcl::AudioBuffer& in, mcl::AudioBuffer& out, float pitch, Frame position);
 
-	SRC_STATE* m_srcState;
+	mcl::Resampler m_resampler;
 };
-} // namespace geena::engine
+} // namespace geena::core

@@ -9,7 +9,7 @@ namespace geena::core
 class Kernel
 {
 public:
-	using Callback = std::function<void(mcl::AudioBuffer&, unsigned)>;
+	using Callback = std::function<void(mcl::AudioBuffer&)>;
 
 	struct Config
 	{
@@ -29,4 +29,4 @@ private:
 	Callback m_callback   = nullptr;
 	unsigned m_bufferSize = 0;
 };
-} // namespace geena::engine
+} // namespace geena::core

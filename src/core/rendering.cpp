@@ -5,49 +5,42 @@ using namespace mcl;
 
 namespace geena::core
 {
-void Renderer::init()
+Renderer::Renderer()
+: m_resampler(Resampler::Quality::LINEAR, /*TODO channels=*/2)
 {
-	m_srcState = src_new(SRC_LINEAR, 2 /*CHANS TODO*/, nullptr);
-	if (m_srcState == nullptr)
-		throw std::bad_alloc();
-
-	// TODO - delete!
 }
 
 /* -------------------------------------------------------------------------- */
 
-Frame Renderer::render(const AudioFile& file, AudioBuffer& out, float pitch, Frame position, Frame bufferSize)
+Frame Renderer::render(const AudioFile& file, AudioBuffer& out, float pitch, Frame position)
 {
-	Frame framesUsed = 0;
+	Frame used = 0;
 
 	if (pitch == 1.0)
-	{
-		file.render(out, position, bufferSize);
-		framesUsed = position + bufferSize;
-	}
+		used = file.render(out, position);
 	else
-	{
-		framesUsed = renderResampled(file.getBuffer(), out, pitch, position);
-	}
+		used = renderResampled(file.getBuffer(), out, pitch, position);
 
-	return framesUsed;
+	return position + used;
 }
 
 /* -------------------------------------------------------------------------- */
 
 Frame Renderer::renderResampled(const AudioBuffer& in, AudioBuffer& out, float pitch, Frame position)
 {
-	SRC_DATA srcData;
+	float* input        = in[0];
+	long   inputPos     = position;
+	long   inputLength  = in.countFrames();
+	float* output       = out[0];
+	long   outputLength = out.countFrames();
+	float  ratio        = pitch;
 
-	srcData.data_in       = in[position];                // Source data
-	srcData.input_frames  = in.countFrames() - position; // How many readable frames
-	srcData.data_out      = out[0];                      // Destination (processed data)
-	srcData.output_frames = out.countFrames();           // How many frames to process
-	srcData.end_of_input  = false;
-	srcData.src_ratio     = 1.0 / pitch;
+	Resampler::Result res = m_resampler.process(input, inputPos, inputLength, output,
+	    outputLength, ratio);
 
-	src_process(m_srcState, &srcData);
+	//if (res.used < out.countFrames())
+	//	m_resampler.last();
 
-	return position + srcData.input_frames_used;
+	return res.used;
 }
-} // namespace geena::engine
+} // namespace geena::core

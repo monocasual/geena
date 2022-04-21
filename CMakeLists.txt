@@ -37,6 +37,7 @@ list(APPEND SOURCES
 	src/core/state.cpp
 	src/deps/mcl-utils/src/fs.cpp
 	src/deps/mcl-utils/src/string.cpp
+	src/deps/mcl-resampler/src/resampler.cpp
 	src/deps/audio-buffer/src/audioBuffer.cpp)
 list(APPEND PREPROCESSOR_DEFS 
 	__LINUX_ALSA__ 

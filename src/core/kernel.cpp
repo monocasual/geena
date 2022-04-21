@@ -54,8 +54,8 @@ int Kernel::callback(void* out, void* /*in*/, unsigned bufferSize, double /*stre
 	AudioBuffer bufferOut(static_cast<float*>(out), bufferSize, /*G_MAX_IO_CHANS TODO */ 2);
 	bufferOut.clear();
 
-	kernel->m_callback(bufferOut, bufferSize);
+	kernel->m_callback(bufferOut);
 
 	return 0;
 }
-} // namespace geena::engine
+} // namespace geena::core
