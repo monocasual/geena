@@ -1,4 +1,5 @@
-#include "pitchSlider.hpp"
+#include "ui/pitchSlider.hpp"
+#include "const.hpp"
 
 namespace geena::ui
 {
@@ -6,6 +7,8 @@ PitchSlider::PitchSlider(int x, int y, int w, int h)
 : Fl_Slider(x, y, w, h)
 {
 	type(FL_VERTICAL);
-	value(0.5);
+	minimum(G_MAX_PITCH);
+	maximum(G_MIN_PITCH);
+	value(1.0);
 }
 } // namespace geena::ui

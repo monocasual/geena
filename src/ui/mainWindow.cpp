@@ -1,4 +1,4 @@
-#include "mainWindow.hpp"
+#include "ui/mainWindow.hpp"
 #include "const.hpp"
 #include "core/api.hpp"
 #include "core/state.hpp"
@@ -79,7 +79,7 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 			buttons->add(m_btn_rewind, 100);
 			buttons->add(m_btn_unload, 100);
 			buttons->add(new Fl_Box(0, 0, 0, 0));
-			buttons->add(m_pitchSlider, 20);
+			buttons->add(m_pitchSlider, 25);
 			buttons->end();
 		}
 
@@ -111,8 +111,7 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 	};
 
 	m_pitchSlider->callback([](Fl_Widget* w, void* /*v*/) {
-		const float v = static_cast<PitchSlider*>(w)->value();
-		core::api::setPitch(mcl::utils::math::map(v, G_MIN_PITCH, G_MAX_PITCH));
+		core::api::setPitch(static_cast<PitchSlider*>(w)->value());
 	});
 
 	show();
