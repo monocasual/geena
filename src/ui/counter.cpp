@@ -1,5 +1,9 @@
 #include "ui/counter.hpp"
+#include "core/api.hpp"
 #include "core/state.hpp"
+#include "deps/mcl-utils/src/fs.hpp"
+#include "deps/mcl-utils/src/string.hpp"
+#include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <string>
 
@@ -27,6 +31,39 @@ void Counter::draw()
 
 	fl_color(fl_rgb_color(0, 0, 0));
 	fl_draw(s.c_str(), x(), y(), w(), h(), FL_ALIGN_CENTER);
+}
+
+/* -------------------------------------------------------------------------- */
+
+int Counter::handle(int event)
+{
+	switch (event)
+	{
+	case FL_DND_ENTER:
+	case FL_DND_DRAG:
+	case FL_DND_RELEASE:
+	{
+		return 1; // enable dnd
+	}
+	case FL_PASTE: // drop (paste) operation
+	{
+		onFileDrop(Fl::event_text());
+		return 1;
+	}
+	default:
+		break;
+	}
+
+	return Fl_Widget::handle(event);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void Counter::onFileDrop(const char* s) const
+{
+	std::vector<std::string> paths = mcl::utils::string::split(s, "\n");
+	std::string              path  = mcl::utils::fs::uriToPath(paths[0]);
+	core::api::loadAudioFile(path);
 }
 
 /* -------------------------------------------------------------------------- */

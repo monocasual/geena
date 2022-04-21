@@ -3,10 +3,8 @@
 #include "core/api.hpp"
 #include "core/state.hpp"
 #include "deps/mcl-fl_flex/src/fl_flex.hpp"
-#include "deps/mcl-utils/src/fs.hpp"
 #include "deps/mcl-utils/src/log.hpp"
 #include "deps/mcl-utils/src/math.hpp"
-#include "deps/mcl-utils/src/string.hpp"
 #include "types.hpp"
 #include "ui/counter.hpp"
 #include "ui/pitchSlider.hpp"
@@ -53,15 +51,6 @@ void onKeyUp_(int key)
 {
 	if (key == FL_Left || key == FL_Right)
 		core::api::nudgePitch_end();
-}
-
-/* -------------------------------------------------------------------------- */
-
-void onFileDrop_(const char* s)
-{
-	std::vector<std::string> paths = mcl::utils::string::split(s, "\n");
-	std::string              path  = mcl::utils::fs::uriToPath(paths[0]);
-	core::api::loadAudioFile(path);
 }
 } // namespace
 
@@ -152,17 +141,6 @@ int MainWindow::handle(int event)
 	{
 		onKeyUp_(Fl::event_key());
 		keyPressed_ = false;
-		return 1;
-	}
-	case FL_DND_ENTER:
-	case FL_DND_DRAG:
-	case FL_DND_RELEASE:
-	{
-		return 1; // enable dnd
-	}
-	case FL_PASTE: // drop (paste) operation
-	{
-		onFileDrop_(Fl::event_text());
 		return 1;
 	}
 	default:
