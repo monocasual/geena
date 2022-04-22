@@ -38,7 +38,7 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 {
 	end();
 
-	Fl_Flex* container = new Fl_Flex(geompp::Rect(0, 0, w, h).reduced({30}), Fl_Flex::Direction::VERTICAL, 30);
+	Fl_Flex* container = new Fl_Flex(geompp::Rect(0, 0, w, h).reduced({30}), Fl_Flex::Direction::VERTICAL, 20);
 	{
 		m_counter  = new Counter(0, 0, 0, 0, m_state);
 		m_progress = new Progress(0, 0, 0, 0, m_state);
@@ -68,7 +68,7 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 		}
 
 		container->add(m_counter);
-		container->add(m_progress, 20);
+		container->add(m_progress, 30);
 		container->add(buttons, 350);
 		container->end();
 	}
