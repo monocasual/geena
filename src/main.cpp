@@ -58,7 +58,7 @@ int main()
 
 	kernel.init({0, 2, 44100, 4096}, cb);
 
-	ui::MainWindow w(0, 0, 640, 480);
+	ui::MainWindow w(0, 0, 640, 700);
 	int            res = w.run();
 
 	kernel.close();

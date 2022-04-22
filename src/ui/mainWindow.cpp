@@ -53,13 +53,13 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 			buttons->add(m_btn_rewind, 100);
 			buttons->add(m_btn_unload, 100);
 			buttons->add(new Fl_Box(0, 0, 0, 0));
-			buttons->add(m_pitchSlider, 25);
+			buttons->add(m_pitchSlider, 30);
 			buttons->end();
 		}
 
 		container->add(m_counter);
 		container->add(m_progress, 20);
-		container->add(buttons, 200);
+		container->add(buttons, 350);
 		container->end();
 	}
 

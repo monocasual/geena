@@ -11,6 +11,6 @@ PitchSlider::PitchSlider(int x, int y, int w, int h)
 	maximum(G_MIN_PITCH);
 	step(G_PITCH_DELTA);
 	slider_size(0.14);
-	value(1.0);
+	value(G_DEFAULT_PITCH);
 }
 } // namespace geena::ui
