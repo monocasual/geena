@@ -49,10 +49,20 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 			m_btn_rewind    = new Fl_Button(0, 0, 0, 0, "Rewind");
 			m_btn_unload    = new Fl_Button(0, 0, 0, 0, "Unload");
 			m_pitchSlider   = new PitchSlider(0, 0, 0, 0);
+
+			Fl_Flex* resetPitch = new Fl_Flex(Fl_Flex::Direction::VERTICAL, 30);
+			{
+				m_btn_resetPitch = new Fl_Button(0, 0, 0, 0, "R");
+				resetPitch->add(new Fl_Box(0, 0, 0, 0));
+				resetPitch->add(m_btn_resetPitch, 30);
+				resetPitch->add(new Fl_Box(0, 0, 0, 0));
+			}
+
 			buttons->add(m_btn_playPause, 100);
 			buttons->add(m_btn_rewind, 100);
 			buttons->add(m_btn_unload, 100);
 			buttons->add(new Fl_Box(0, 0, 0, 0));
+			buttons->add(resetPitch, 30);
 			buttons->add(m_pitchSlider, 30);
 			buttons->end();
 		}
@@ -87,6 +97,13 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 	m_pitchSlider->callback([](Fl_Widget* w, void* /*v*/) {
 		core::api::setPitch(static_cast<PitchSlider*>(w)->value());
 	});
+
+	m_btn_resetPitch->callback([](Fl_Widget* /*w*/, void* v) {
+		MainWindow* mainWindow = static_cast<MainWindow*>(v);
+		core::api::setPitch(G_DEFAULT_PITCH);
+		mainWindow->m_pitchSlider->value(G_DEFAULT_PITCH);
+	},
+	    (void*)this);
 
 	show();
 }

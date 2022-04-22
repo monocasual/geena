@@ -32,5 +32,6 @@ private:
 	Counter*     m_counter;
 	Progress*    m_progress;
 	PitchSlider* m_pitchSlider;
+	Fl_Button*   m_btn_resetPitch;
 };
 } // namespace geena::ui
