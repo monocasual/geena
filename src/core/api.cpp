@@ -64,7 +64,9 @@ bool loadAudioFile(std::string path)
 	g_engine.layout.swap();
 
 	g_engine.layout.get().shared->audioFile = std::move(res.value());
-	g_engine.layout.get().enabled           = true;
+	g_engine.layout.get().shared->status.store(ReadStatus::STOP);
+	g_engine.layout.get().shared->position.store(0);
+	g_engine.layout.get().enabled = true;
 	g_engine.layout.swap();
 
 	return true;
