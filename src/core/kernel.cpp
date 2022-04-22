@@ -1,4 +1,5 @@
 #include "kernel.hpp"
+#include "deps/mcl-utils/src/log.hpp"
 #include <cassert>
 
 using namespace mcl;
@@ -23,6 +24,7 @@ bool Kernel::init(Config c, Callback f)
 	}
 	catch (RtAudioError& e)
 	{
+		ML_DEBUG("Open stream error: " << e.getMessage());
 		//e.printMessage();
 		return false;
 	}
