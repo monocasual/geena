@@ -38,6 +38,8 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 {
 	end();
 
+	Fl::visible_focus(0);
+
 	Fl_Flex* container = new Fl_Flex(geompp::Rect(0, 0, w, h).reduced({30}), Fl_Flex::Direction::VERTICAL, 20);
 	{
 		m_counter  = new Counter(0, 0, 0, 0, m_state);
@@ -119,6 +121,7 @@ int MainWindow::handle(int event)
 	{
 		return 1; // Enables receiving keyboard events
 	}
+	case FL_SHORTCUT: // In case widget that isn't ours has focus
 	case FL_KEYDOWN:
 	{
 		if (m_keyPressed)
