@@ -10,7 +10,10 @@ namespace geena::core
 class Renderer
 {
 public:
-	Renderer();
+	/* Init
+	Initializes Renderer. Call this each time a new file is loaded. */
+
+	void init(Frame systemBufferSize, int numAudioFileChannels);
 
 	/* render
 	Renders a portion of AudioFile to the AudioBuffer, starting from frame 
@@ -21,6 +24,7 @@ public:
 private:
 	Frame renderResampled(const mcl::AudioBuffer& in, mcl::AudioBuffer& out, float pitch, Frame position);
 
-	mcl::Resampler m_resampler;
+	mcl::AudioBuffer m_buffer;
+	mcl::Resampler   m_resampler;
 };
 } // namespace geena::core

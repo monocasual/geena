@@ -13,11 +13,13 @@ public:
 
 	struct Config
 	{
-		int deviceId;
-		int channels;
-		int sampleRate;
-		int bufferSize;
+		int      deviceId;
+		int      channels;
+		int      sampleRate;
+		unsigned bufferSize;
 	};
+
+	Config getConfig() const;
 
 	bool init(Config c, Callback f);
 	void close();
@@ -26,7 +28,7 @@ private:
 	static int callback(void*, void*, unsigned, double, RtAudioStreamStatus, void*);
 
 	RtAudio  m_rt;
-	Callback m_callback   = nullptr;
-	unsigned m_bufferSize = 0;
+	Callback m_callback = nullptr;
+	Config   m_config;
 };
 } // namespace geena::core

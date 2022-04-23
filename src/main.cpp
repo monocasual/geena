@@ -1,9 +1,6 @@
 #include "core/audioFile.hpp"
 #include "core/audioFileFactory.hpp"
 #include "core/engine.hpp"
-#include "core/kernel.hpp"
-#include "core/rendering.hpp"
-#include "core/state.hpp"
 #include "deps/atomic-swapper/src/atomic-swapper.hpp"
 #include "deps/mcl-utils/src/log.hpp"
 #include "types.hpp"
@@ -21,18 +18,13 @@ int main()
 {
 	using namespace geena;
 
-	core::Renderer renderer;
-	core::Kernel   kernel;
-
-	core::Kernel::Callback cb = [&renderer](AudioBuffer& out) {
+	core::Kernel::Callback cb = [renderer = &core::g_engine.renderer](AudioBuffer& out) {
 		AtomicSwapper<core::Layout>::RtLock lock(core::g_engine.layout);
 
 		const core::Layout& layout_RT = lock.get();
 
 		if (!layout_RT.enabled)
 			return;
-
-		//printf("%f\n", layout_RT.pitch);
 
 		ReadStatus status   = layout_RT.shared->status.load();
 		Frame      position = layout_RT.shared->position.load();
@@ -42,9 +34,7 @@ int main()
 
 		const Frame max = layout_RT.shared->audioFile.countFrames();
 
-		//ML_DEBUG("Render [" << position << ", " << to << ") - " << max);
-
-		position = renderer.render(layout_RT.shared->audioFile, out, layout_RT.pitch, position);
+		position = renderer->render(layout_RT.shared->audioFile, out, layout_RT.pitch, position);
 
 		if (position >= max)
 		{
@@ -56,12 +46,13 @@ int main()
 		layout_RT.shared->position.store(position);
 	};
 
-	kernel.init({0, 2, 44100, 4096}, cb);
+	core::g_engine.kernel.init({1, 2, 44100, 4096}, cb);
+	core::g_engine.renderer.init(4096, 1);
 
 	ui::MainWindow w(0, 0, 640, 700);
 	int            res = w.run();
 
-	kernel.close();
+	core::g_engine.kernel.close();
 
 	return res;
 }

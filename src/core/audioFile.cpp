@@ -24,6 +24,7 @@ bool AudioFile::isValid() const { return m_data.isAllocd(); }
 /* -------------------------------------------------------------------------- */
 
 Frame AudioFile::countFrames() const { return m_data.countFrames(); }
+Frame AudioFile::countChannels() const { return m_data.countChannels(); }
 
 /* -------------------------------------------------------------------------- */
 

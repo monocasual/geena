@@ -8,17 +8,17 @@ namespace geena::core
 {
 bool Kernel::init(Config c, Callback f)
 {
-	RtAudio::StreamParameters params;
-	params.deviceId     = c.deviceId;
-	params.nChannels    = c.channels;
-	params.firstChannel = 0;
+	m_config   = c;
+	m_callback = f;
 
-	m_bufferSize = c.bufferSize;
-	m_callback   = f;
+	RtAudio::StreamParameters params;
+	params.deviceId     = m_config.deviceId;
+	params.nChannels    = m_config.channels;
+	params.firstChannel = 0;
 
 	try
 	{
-		m_rt.openStream(&params, nullptr, RTAUDIO_FLOAT32, c.sampleRate, &m_bufferSize, &callback, (void*)this);
+		m_rt.openStream(&params, nullptr, RTAUDIO_FLOAT32, m_config.sampleRate, &m_config.bufferSize, &callback, (void*)this);
 		m_rt.startStream();
 		return true;
 	}
@@ -59,5 +59,11 @@ int Kernel::callback(void* out, void* /*in*/, unsigned bufferSize, double /*stre
 	kernel->m_callback(bufferOut);
 
 	return 0;
+}
+/* -------------------------------------------------------------------------- */
+
+Kernel::Config Kernel::getConfig() const
+{
+	return m_config;
 }
 } // namespace geena::core

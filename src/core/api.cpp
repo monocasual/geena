@@ -58,12 +58,15 @@ bool loadAudioFile(std::string path)
 	auto res = core::makeAudioFile(path, 44100);
 	if (!res)
 		return false;
+	AudioFile audioFile = res.value();
 
 	/* Disable layout first, then alter data. */
 	g_engine.layout.get().enabled = false;
 	g_engine.layout.swap();
 
-	g_engine.layout.get().shared->audioFile = std::move(res.value());
+	g_engine.renderer.init(core::g_engine.kernel.getConfig().bufferSize, audioFile.countChannels());
+
+	g_engine.layout.get().shared->audioFile = std::move(audioFile);
 	g_engine.layout.get().shared->status.store(ReadStatus::STOP);
 	g_engine.layout.get().shared->position.store(0);
 	g_engine.layout.get().enabled = true;

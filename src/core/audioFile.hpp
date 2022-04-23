@@ -15,6 +15,7 @@ public:
 
 	bool                    isValid() const;
 	Frame                   countFrames() const;
+	int                     countChannels() const;
 	const mcl::AudioBuffer& getBuffer() const;
 	std::string             getPath() const;
 
