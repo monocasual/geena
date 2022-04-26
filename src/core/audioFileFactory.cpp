@@ -59,18 +59,25 @@ std::optional<AudioFile> makeAudioFile(std::string path, int sampleRate)
 		return {};
 	}
 
+	ML_DEBUG("Allocating Audio File buffer...");
+
 	AudioBuffer buffer(header.frames, header.channels);
+
+	ML_DEBUG("Reading file data...");
 
 	if (sf_readf_float(sndfile, buffer[0], header.frames) != header.frames)
 		ML_DEBUG("Warning: incomplete file read!\n");
 	sf_close(sndfile);
 
 	if (header.samplerate != sampleRate)
+	{
+		ML_DEBUG("Sample rate mismatch, proceed with resampling...");
 		if (!resample(buffer, header.samplerate, sampleRate))
 		{
 			ML_DEBUG("Error while resampling audio");
 			return {};
 		}
+	}
 
 	ML_DEBUG("AudioFile ready");
 	return {AudioFile(std::move(buffer), path)};
