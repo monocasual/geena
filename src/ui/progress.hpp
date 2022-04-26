@@ -24,9 +24,17 @@ public:
 	std::function<void(Frame)> onClick = {nullptr};
 
 private:
-	int   frameToPixel(Frame f);
-	Frame pixelToFrame(int p);
+	enum class HandleStatus
+	{
+		NORMAL,
+		DRAGGED
+	};
+
+	int   frameToPixel(Frame f) const;
+	Frame pixelToFrame(int p) const;
+	int   getCursorX() const;
 
 	core::CurrentState& m_state;
+	HandleStatus        m_status;
 };
 } // namespace geena::ui
