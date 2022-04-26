@@ -29,6 +29,8 @@ private:
 	Fl_Button*   m_btn_playPause;
 	Fl_Button*   m_btn_rewind;
 	Fl_Button*   m_btn_unload;
+	Fl_Button*   m_btn_nudgeUp;
+	Fl_Button*   m_btn_nudgeDown;
 	Counter*     m_counter;
 	Progress*    m_progress;
 	PitchSlider* m_pitchSlider;

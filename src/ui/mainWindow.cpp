@@ -40,16 +40,32 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 
 	Fl::visible_focus(0);
 
-	Fl_Flex* container = new Fl_Flex(geompp::Rect(0, 0, w, h).reduced({30}), Fl_Flex::Direction::VERTICAL, 20);
+	Fl_Flex* container = new Fl_Flex(geompp::Rect(0, 0, w, h).reduced({20}), Fl_Flex::Direction::VERTICAL, 20);
 	{
+		Fl_Flex* top = new Fl_Flex(Fl_Flex::Direction::HORIZONTAL, 20);
+		{
+			m_btn_unload = new Fl_Button(0, 0, 0, 0, "Unload");
+			top->add(new Fl_Box(0, 0, 0, 0));
+			top->add(m_btn_unload, 100);
+			top->end();
+		}
+
 		m_counter  = new Counter(0, 0, 0, 0, m_state);
 		m_progress = new Progress(0, 0, 0, 0, m_state);
 
 		Fl_Flex* buttons = new Fl_Flex(Fl_Flex::Direction::HORIZONTAL, 20);
 		{
-			m_btn_playPause = new Fl_Button(0, 0, 0, 0, "Play/Pause");
-			m_btn_rewind    = new Fl_Button(0, 0, 0, 0, "Rewind");
-			m_btn_unload    = new Fl_Button(0, 0, 0, 0, "Unload");
+			Fl_Flex* play = new Fl_Flex(Fl_Flex::Direction::VERTICAL, 20);
+			{
+				m_btn_rewind    = new Fl_Button(0, 0, 0, 0, "Rewind");
+				m_btn_playPause = new Fl_Button(0, 0, 0, 0, "Play/Pause");
+				play->add(m_btn_rewind);
+				play->add(m_btn_playPause);
+				play->end();
+			}
+
+			m_btn_nudgeDown = new Fl_Button(0, 0, 0, 0, "<<");
+			m_btn_nudgeUp   = new Fl_Button(0, 0, 0, 0, ">>");
 			m_pitchSlider   = new PitchSlider(0, 0, 0, 0);
 
 			Fl_Flex* resetPitch = new Fl_Flex(Fl_Flex::Direction::VERTICAL, 30);
@@ -60,15 +76,17 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 				resetPitch->add(new Fl_Box(0, 0, 0, 0));
 			}
 
-			buttons->add(m_btn_playPause, 100);
-			buttons->add(m_btn_rewind, 100);
-			buttons->add(m_btn_unload, 100);
+			buttons->add(play, 120);
+			buttons->add(new Fl_Box(0, 0, 0, 0));
+			buttons->add(m_btn_nudgeDown, 90);
+			buttons->add(m_btn_nudgeUp, 90);
 			buttons->add(new Fl_Box(0, 0, 0, 0));
 			buttons->add(resetPitch, 30);
 			buttons->add(m_pitchSlider, 30);
 			buttons->end();
 		}
 
+		container->add(top, 30);
 		container->add(m_counter);
 		container->add(m_progress, 30);
 		container->add(buttons, 350);
@@ -90,6 +108,22 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 
 	m_btn_unload->callback([](Fl_Widget* /*w*/, void* /*v*/) {
 		core::api::unloadAudioFile();
+	});
+
+	m_btn_nudgeDown->when(FL_WHEN_CHANGED);
+	m_btn_nudgeDown->callback([](Fl_Widget* w, void* /*v*/) {
+		if (static_cast<Fl_Button*>(w)->value())
+			core::api::nudgePitch_begin(PitchDir::DOWN);
+		else
+			core::api::nudgePitch_end();
+	});
+
+	m_btn_nudgeUp->when(FL_WHEN_CHANGED);
+	m_btn_nudgeUp->callback([](Fl_Widget* w, void* /*v*/) {
+		if (static_cast<Fl_Button*>(w)->value())
+			core::api::nudgePitch_begin(PitchDir::UP);
+		else
+			core::api::nudgePitch_end();
 	});
 
 	m_progress->onClick = [](Frame f) {
