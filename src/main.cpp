@@ -1,3 +1,4 @@
+#include "const.hpp"
 #include "core/audioFile.hpp"
 #include "core/audioFileFactory.hpp"
 #include "core/engine.hpp"
@@ -35,6 +36,12 @@ int main()
 		const Frame max = layout_RT.shared->audioFile.countFrames();
 
 		position = renderer->render(layout_RT.shared->audioFile, out, layout_RT.pitch, position);
+		if (layout_RT.playMode == PlayMode::SEEK)
+		{
+			// if position > layout_RT.seekPoint + G_SEEK_LENGTH ---> rewind to layout_RT.seekPoint
+			if (position > layout_RT.seekPoint + G_SEEK_LENGTH)
+				position = layout_RT.seekPoint;
+		}
 
 		if (position >= max)
 		{
@@ -46,8 +53,8 @@ int main()
 		layout_RT.shared->position.store(position);
 	};
 
-	core::g_engine.kernel.init({1, 2, 44100, 4096}, cb);
-	core::g_engine.renderer.init(4096, 1);
+	core::g_engine.kernel.init({1, 2, 44100, 512}, cb);
+	core::g_engine.renderer.init(512, 1);
 
 	ui::MainWindow w(0, 0, 640, 700);
 	int            res = w.run();

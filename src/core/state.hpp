@@ -17,9 +17,12 @@ struct Shared
 
 struct Layout
 {
-	bool    enabled = true;
-	float   pitch   = 1.0f;
-	Shared* shared  = nullptr;
+	bool     enabled   = true;
+	PlayMode playMode  = PlayMode::NORMAL;
+	Frame    seekPoint = 0;
+	Frame    cuePoint  = 0;
+	float    pitch     = 1.0f;
+	Shared*  shared    = nullptr;
 };
 
 /* CurrentState
@@ -28,9 +31,13 @@ passing. */
 
 struct CurrentState
 {
-	Frame       position;
-	Frame       audioFileLength;
+	ReadStatus  status          = ReadStatus::STOP;
+	PlayMode    playMode        = PlayMode::NORMAL;
+	Frame       position        = 0;
+	Frame       seekPoint       = 0;
+	Frame       cuePoint        = 0;
+	Frame       audioFileLength = 0;
 	std::string audioFilePath;
-	float       pitch;
+	float       pitch = 1.0f;
 };
 } // namespace geena::core

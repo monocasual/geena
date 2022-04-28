@@ -57,9 +57,11 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 		{
 			Fl_Flex* play = new Fl_Flex(Fl_Flex::Direction::VERTICAL, 20);
 			{
-				m_btn_rewind    = new Fl_Button(0, 0, 0, 0, "Rewind");
+				m_btn_rewind    = new Fl_Button(0, 0, 0, 0, "|<< Rewind");
+				m_btn_cue       = new Fl_Button(0, 0, 0, 0, "Cue");
 				m_btn_playPause = new Fl_Button(0, 0, 0, 0, "Play/Pause");
-				play->add(m_btn_rewind);
+				play->add(m_btn_rewind, 30);
+				play->add(m_btn_cue);
 				play->add(m_btn_playPause);
 				play->end();
 			}
@@ -101,6 +103,12 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 	m_btn_playPause->callback([](Fl_Widget* /*w*/, void* /*v*/) {
 		core::api::playPauseToggle();
 	});
+
+	m_btn_cue->callback([](Fl_Widget* /*w*/, void* v) {
+		MainWindow* mainWindow = static_cast<MainWindow*>(v);
+		core::api::setCue();
+	},
+	    this);
 
 	m_btn_rewind->callback([](Fl_Widget* /*w*/, void* /*v*/) {
 		core::api::rewind();

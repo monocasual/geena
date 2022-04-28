@@ -18,5 +18,11 @@ void  nudgePitch_begin(PitchDir dir);
 void  nudgePitch_end();
 void  goToFrame(Frame f);
 
+/* setCue
+Sets cue point to the current position. Also turns off SEEK mode (if currently 
+enabled). */
+
+void setCue();
+
 CurrentState getCurrentState();
 } // namespace geena::core::api

@@ -27,6 +27,7 @@ private:
 	bool               m_keyPressed;
 
 	Fl_Button*   m_btn_playPause;
+	Fl_Button*   m_btn_cue;
 	Fl_Button*   m_btn_rewind;
 	Fl_Button*   m_btn_unload;
 	Fl_Button*   m_btn_nudgeUp;
