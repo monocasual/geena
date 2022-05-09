@@ -104,11 +104,10 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 		core::api::playPauseToggle();
 	});
 
-	m_btn_cue->callback([](Fl_Widget* /*w*/, void* v) {
-		MainWindow* mainWindow = static_cast<MainWindow*>(v);
-		core::api::setCue();
-	},
-	    this);
+	m_btn_cue->when(FL_WHEN_CHANGED);
+	m_btn_cue->callback([](Fl_Widget* w, void* /*v*/) {
+		core::api::setCue(static_cast<Fl_Button*>(w)->value());
+	});
 
 	m_btn_rewind->callback([](Fl_Widget* /*w*/, void* /*v*/) {
 		core::api::rewind();

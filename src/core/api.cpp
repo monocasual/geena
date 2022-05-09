@@ -174,30 +174,49 @@ void goToFrame(Frame f)
 
 /* -------------------------------------------------------------------------- */
 
-void setCue()
+void setCue(bool isKeyPressed)
 {
-	const Layout&    layout     = g_engine.layout.get();
+	const Layout& layout = g_engine.layout.get();
+
+	if (!layout.shared->audioFile.isValid())
+		return;
+
 	const ReadStatus readStatus = layout.shared->status.load();
-	const Frame      position   = layout.shared->position.load();
+	const Frame      currentPos = layout.shared->position.load();
+	const Frame      cuePoint   = layout.cuePoint;
 
 	if (readStatus == ReadStatus::STOP)
 	{
-		ML_DEBUG("Set cue at current position " << position);
-
-		setCueAtFrame_(position);
+		if (currentPos == cuePoint)
+		{
+			if (isKeyPressed)
+			{
+				ML_DEBUG("Start preview cue at " << cuePoint);
+				play();
+			}
+			else
+			{
+				ML_DEBUG("Stop preview cue at " << cuePoint);
+				pause();
+				goToFrame(cuePoint);
+			}
+		}
+		else
+		{
+			ML_DEBUG("Set cue at current position " << currentPos);
+			setCueAtFrame_(currentPos);
+		}
 	}
 	else // ReadStatus::PLAY
 	{
 		if (layout.playMode == PlayMode::NORMAL)
 		{
 			ML_DEBUG("Jump to cue at frame " << layout.cuePoint);
-
 			layout.shared->position.store(layout.cuePoint);
 		}
 		else // PlayMode::SEEK
 		{
 			ML_DEBUG("Set cue at seek point " << layout.seekPoint << " (SEEK mode)");
-
 			setCueAtFrame_(layout.seekPoint);
 		}
 

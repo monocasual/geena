@@ -7,7 +7,7 @@
 namespace geena::core::api
 {
 void  play();
-void  stop();
+void  pause();
 void  playPauseToggle();
 void  rewind();
 bool  loadAudioFile(std::string path);
@@ -22,7 +22,7 @@ void  goToFrame(Frame f);
 Sets cue point to the current position. Also turns off SEEK mode (if currently 
 enabled). */
 
-void setCue();
+void setCue(bool isKeyPressed);
 
 CurrentState getCurrentState();
 } // namespace geena::core::api
