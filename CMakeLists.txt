@@ -101,6 +101,9 @@ list(APPEND LIBRARIES fltk fltk_gl fltk_forms fltk_images)
 find_package(SampleRate CONFIG REQUIRED)
 list(APPEND LIBRARIES SampleRate::samplerate)
 
+find_package(fmt CONFIG REQUIRED)
+list(APPEND LIBRARIES fmt::fmt)
+
 # ------------------------------------------------------------------------------
 # Finalize 'geena' target (main executable).
 # ------------------------------------------------------------------------------
