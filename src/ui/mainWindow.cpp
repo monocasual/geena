@@ -68,7 +68,6 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 
 			m_btn_nudgeDown = new Fl_Button(0, 0, 0, 0, "<<");
 			m_btn_nudgeUp   = new Fl_Button(0, 0, 0, 0, ">>");
-			m_pitchSlider   = new PitchSlider(0, 0, 0, 0);
 
 			Fl_Flex* resetPitch = new Fl_Flex(Fl_Flex::Direction::VERTICAL, 30);
 			{
@@ -76,6 +75,18 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 				resetPitch->add(new Fl_Box(0, 0, 0, 0));
 				resetPitch->add(m_btn_resetPitch, 30);
 				resetPitch->add(new Fl_Box(0, 0, 0, 0));
+				resetPitch->end();
+			}
+
+			Fl_Flex* pitch = new Fl_Flex(Fl_Flex::Direction::VERTICAL, 10);
+			{
+				m_pitchSlider   = new PitchSlider(0, 0, 0, 0);
+				m_btn_pitchUp   = new Fl_Button(0, 0, 0, 0, "+");
+				m_btn_pitchDown = new Fl_Button(0, 0, 0, 0, "-");
+				pitch->add(m_btn_pitchUp, 30);
+				pitch->add(m_pitchSlider);
+				pitch->add(m_btn_pitchDown, 30);
+				pitch->end();
 			}
 
 			buttons->add(play, 120);
@@ -84,7 +95,7 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 			buttons->add(m_btn_nudgeUp, 90);
 			buttons->add(new Fl_Box(0, 0, 0, 0));
 			buttons->add(resetPitch, 30);
-			buttons->add(m_pitchSlider, 30);
+			buttons->add(pitch, 30);
 			buttons->end();
 		}
 
@@ -117,6 +128,18 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 		core::api::unloadAudioFile();
 	});
 
+	m_btn_pitchUp->callback([](Fl_Widget* /*w*/, void* v) {
+		MainWindow* mainWindow = static_cast<MainWindow*>(v);
+		mainWindow->m_pitchSlider->value(core::api::setPitch(PitchDir::UP));
+	},
+	    this);
+
+	m_btn_pitchDown->callback([](Fl_Widget* /*w*/, void* v) {
+		MainWindow* mainWindow = static_cast<MainWindow*>(v);
+		mainWindow->m_pitchSlider->value(core::api::setPitch(PitchDir::DOWN));
+	},
+	    this);
+
 	m_btn_nudgeDown->when(FL_WHEN_CHANGED);
 	m_btn_nudgeDown->callback([](Fl_Widget* w, void* /*v*/) {
 		if (static_cast<Fl_Button*>(w)->value())
@@ -146,7 +169,7 @@ MainWindow::MainWindow(int x, int y, int w, int h)
 		core::api::setPitch(G_DEFAULT_PITCH);
 		mainWindow->m_pitchSlider->value(G_DEFAULT_PITCH);
 	},
-	    (void*)this);
+	    this);
 
 	show();
 }

@@ -30,6 +30,8 @@ private:
 	Fl_Button*   m_btn_cue;
 	Fl_Button*   m_btn_rewind;
 	Fl_Button*   m_btn_unload;
+	Fl_Button*   m_btn_pitchUp;
+	Fl_Button*   m_btn_pitchDown;
 	Fl_Button*   m_btn_nudgeUp;
 	Fl_Button*   m_btn_nudgeDown;
 	Counter*     m_counter;
