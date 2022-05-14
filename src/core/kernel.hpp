@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/config.hpp"
 #include "deps/audio-buffer/src/audioBuffer.hpp"
 #include <RtAudio.h>
 #include <functional>
@@ -10,14 +11,6 @@ class Kernel
 {
 public:
 	using Callback = std::function<void(mcl::AudioBuffer&)>;
-
-	struct Config
-	{
-		int      deviceId;
-		int      channels;
-		int      sampleRate;
-		unsigned bufferSize;
-	};
 
 	Config getConfig() const;
 

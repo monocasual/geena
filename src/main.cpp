@@ -1,12 +1,14 @@
 #include "const.hpp"
 #include "core/audioFile.hpp"
 #include "core/audioFileFactory.hpp"
+#include "core/config.hpp"
 #include "core/engine.hpp"
 #include "deps/atomic-swapper/src/atomic-swapper.hpp"
 #include "deps/mcl-utils/src/log.hpp"
 #include "types.hpp"
 #include "ui/mainWindow.hpp"
-#include <iostream>
+#include <string>
+#include <vector>
 
 using namespace mcl;
 
@@ -15,7 +17,7 @@ namespace geena::core
 Engine g_engine;
 } // namespace geena::core
 
-int main()
+int main(int argc, char** argv)
 {
 	using namespace geena;
 
@@ -53,8 +55,22 @@ int main()
 		layout_RT.shared->position.store(position);
 	};
 
-	core::g_engine.kernel.init({1, 2, 44100, 512}, cb);
-	core::g_engine.renderer.init(512, 1);
+	/* TODO - move to engine::init() */
+	/* TODO - move to engine::init() */
+	/* TODO - move to engine::init() */
+	std::vector<std::string> args(argv, argv + argc);
+
+	auto configOpt = core::config::read(args[1]);
+	if (!configOpt)
+		return 1;
+
+	core::Config config = configOpt.value();
+
+	core::g_engine.kernel.init(config, cb);
+	core::g_engine.renderer.init(config.bufferSize, 1);
+	/* TODO - move to engine::init() */
+	/* TODO - move to engine::init() */
+	/* TODO - move to engine::init() */
 
 	ui::MainWindow w(0, 0, 640, 700);
 	int            res = w.run();

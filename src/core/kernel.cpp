@@ -62,7 +62,7 @@ int Kernel::callback(void* out, void* /*in*/, unsigned bufferSize, double /*stre
 }
 /* -------------------------------------------------------------------------- */
 
-Kernel::Config Kernel::getConfig() const
+Config Kernel::getConfig() const
 {
 	return m_config;
 }

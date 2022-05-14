@@ -32,6 +32,7 @@ list(APPEND SOURCES
 	src/core/api.cpp
 	src/core/rendering.cpp
 	src/core/kernel.cpp
+	src/core/config.cpp
 	src/core/audioFile.cpp
 	src/core/audioFileFactory.cpp
 	src/core/state.cpp
@@ -103,6 +104,10 @@ list(APPEND LIBRARIES SampleRate::samplerate)
 
 find_package(fmt CONFIG REQUIRED)
 list(APPEND LIBRARIES fmt::fmt)
+
+find_package(nlohmann_json CONFIG REQUIRED)
+list(APPEND LIBRARIES nlohmann_json::nlohmann_json)
+
 
 # ------------------------------------------------------------------------------
 # Finalize 'geena' target (main executable).
